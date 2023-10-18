@@ -12,6 +12,7 @@
     "@mantine/core": "^7.1.3",
     "@mantine/dates": "^7.1.3",
     "@mantine/hooks": "^7.1.3",
+    "@tabler/icons-react": "^2.39.0",
     "@vercel/og": "^0.5.18",
     "dayjs": "^1.11.10",
     "jsonschema": "^1.4.1",

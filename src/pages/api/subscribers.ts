@@ -48,7 +48,10 @@ async function createSubscriber(req: CustomRequest, res: NextApiResponse<Subscri
           createdAt: new Date(),
           confirmed: false,
           confirmationId,
-          groups: req.body.groups || []
+          groups: req.body.groups || [],
+          received: 0,
+          opened: 0,
+          clicked: 0,
         });
         await sendConfirmationEmail(req.body.email, { confirmationId })
       }

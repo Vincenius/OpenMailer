@@ -8,9 +8,10 @@ export interface Subscriber {
   groups: string[];
   confirmed: boolean;
   confirmationId: string,
-  // received
-  // opened
-  // clicked
+  received: number,
+  opened: number,
+  clicked: number,
+  unsubscribedAt?: Date,
 }
 
 export class SubscriberDAO {
@@ -33,6 +34,15 @@ export class SubscriberDAO {
     const result = await this.collection.findOneAndUpdate(
       query,
       { $set: update },
+      { returnDocument: 'after' }
+    )
+    return result;
+  }
+
+  async increaseTrack(query: Object, field: string): Promise<WithId<Subscriber> | null> {
+    const result = await this.collection.findOneAndUpdate(
+      query,
+      { $inc: { [field]: 1 } },
       { returnDocument: 'after' }
     )
     return result;

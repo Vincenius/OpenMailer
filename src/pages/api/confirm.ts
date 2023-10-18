@@ -33,7 +33,8 @@ async function handler(
             const userId = (subscriber._id || '').toString()
             await Promise.all([
               sendWelcomeEmail(subscriber.email, { userId }),
-              campaignDAO.addUserByQuery({ id: welcomeCampaignId }, { id: userId, opens: 0, clicks: [] })
+              campaignDAO.addUserByQuery({ id: welcomeCampaignId }, { id: userId, opens: 0, clicks: [] }),
+              subscriberDAO.increaseTrack({ confirmationId: req.query.id }, 'received')
             ])
           }
           res.redirect(301, process.env.CONFIRM_REDIRECT || '/thank-you') // todo fallback thank you page

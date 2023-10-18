@@ -1,6 +1,6 @@
 import { Db, Collection, ObjectId, WithId } from 'mongodb';
 
-interface Users {
+export interface User {
   id: string,
   opens: number,
   clicks: string[],
@@ -12,7 +12,7 @@ export interface Campaign {
   createdAt: Date;
   subject: string;
   html: string;
-  users: Users[];
+  users: User[];
 }
 
 export class CampaignDAO {
@@ -31,7 +31,7 @@ export class CampaignDAO {
     return result[0];
   }
 
-  async addUserByQuery(query: Object, update: Users): Promise<WithId<Campaign> | null> {
+  async addUserByQuery(query: Object, update: User): Promise<WithId<Campaign> | null> {
     const result = await this.collection.findOneAndUpdate(
       query,
       { $push: { users: update } },
