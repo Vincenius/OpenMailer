@@ -23,7 +23,7 @@ async function handler(
   res: NextApiResponse<Result>
 ) {
   if (req.method === 'POST') {
-    if (req.body.api_key === process.env.TRACKING_API_KEY) {
+    if (req.body.api_key === process.env.API_KEY) {
       const campaingDao = new CampaignDAO(req.db);
       const subscriberDAO = new SubscriberDAO(req.db);
       try {

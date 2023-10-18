@@ -4,8 +4,11 @@ import Layout from './Layout'
 
 export default function Home() {
   return (
-    <Layout title="Dashboard">
+    <Layout title="Dashboard" isLoading={false}>
       Dashboard
+      {/* subscriber count overview */}
+      {/* latest campaign overview */}
+      {/* new campaign link */}
     </Layout>
   )
 }

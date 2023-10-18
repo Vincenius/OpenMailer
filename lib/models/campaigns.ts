@@ -12,6 +12,7 @@ export interface Campaign {
   createdAt: Date;
   subject: string;
   html: string;
+  // todo status = pending, sending, done
   users: User[];
 }
 

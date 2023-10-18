@@ -20,7 +20,7 @@ const handler = (req: NextApiRequest) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: process.env.TRACKING_API_KEY,
+        api_key: process.env.API_KEY,
         type: 'open',
         userId,
         campaignId,

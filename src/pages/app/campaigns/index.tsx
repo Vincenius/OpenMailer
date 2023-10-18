@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import useSWR from 'swr'
-import { Table, Tooltip, ActionIcon, Modal, Text, Card, Flex } from '@mantine/core';
+import { Table, Tooltip, ActionIcon, Modal, Text, Card, Flex, Button } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react'
 import Layout from '../Layout'
 import fetcher from '../../../utils/fetcher'
@@ -84,6 +85,13 @@ export default function Campaigns() {
 
   return (
     <Layout title="Campaigns" isLoading={isLoading}>
+      <Button
+        component={Link}
+        href="/app/campaigns/new"
+        size="md" mb="md"
+      >
+        New Campaign
+      </Button>
       <Table striped>
         <Table.Thead>
           <Table.Tr>
