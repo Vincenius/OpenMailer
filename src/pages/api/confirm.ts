@@ -33,7 +33,7 @@ async function handler(
             const userId = (subscriber._id || '').toString()
             await Promise.all([
               sendWelcomeEmail(subscriber.email, { userId }), // todo send async by using send api
-              campaignDAO.addUserByQuery({ id: welcomeCampaignId }, { id: userId, opens: 0, clicks: [] }),
+              campaignDAO.addUserByQuery({ id: welcomeCampaignId }, { id: userId, opens: 0, clicks: [], status: 'success' }),
               subscriberDAO.increaseTrack({ confirmationId: req.query.id }, 'received')
             ])
           }

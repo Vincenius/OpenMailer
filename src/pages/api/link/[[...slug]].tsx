@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
+  res.setHeader('Cache-Control', 'no-store')
+
   const { slug = [] } = req.query
 
   if (slug.length === 3) {
@@ -9,6 +11,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     const link = atob(slug[2]);
 
     fetch(`${process.env.BASE_URL}/api/track`, {
+      cache: 'no-store',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

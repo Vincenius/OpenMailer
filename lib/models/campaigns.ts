@@ -2,6 +2,7 @@ import { Db, Collection, ObjectId, WithId } from 'mongodb';
 
 export interface User {
   id: string,
+  status: string,
   opens: number,
   clicks: string[],
 }
@@ -12,7 +13,7 @@ export interface Campaign {
   createdAt: Date;
   subject: string;
   html: string;
-  // todo status = pending, sending, done
+  // todo status = pending, sending, failed, done
   users: User[];
 }
 
@@ -54,12 +55,25 @@ export class CampaignDAO {
   }
 
   async trackClick(campaignId: string, userId: string, link: string): Promise<WithId<Campaign> | null> {
+    console.log('TRACK', userId, link)
     const result = await this.collection.findOneAndUpdate(
       {
         id: campaignId,
         'users.id': userId,
       },
       { $push: { 'users.$.clicks': link }},
+      { returnDocument: 'after' }
+    )
+    return result;
+  }
+
+  async updateStatus(campaignId: string, userId: string, status: string): Promise<WithId<Campaign> | null> {
+    const result = await this.collection.findOneAndUpdate(
+      {
+        id: campaignId,
+        'users.id': userId,
+      },
+      { $set: { 'users.$.status': status } },
       { returnDocument: 'after' }
     )
     return result;

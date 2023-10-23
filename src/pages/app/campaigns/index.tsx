@@ -28,7 +28,7 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
   const linkTableData = uniqueLinks?.map((link: string) => ({
     link,
     totalClicks: campaign?.users?.reduce((acc, curr) => acc + curr.clicks.filter(c => c === link).length, 0),
-    uniqueClicks: campaign?.users?.reduce((acc, curr) => acc + curr.clicks.filter(c => c === link).length > 0 ? 1 : 0, 0)
+    uniqueClicks: campaign?.users?.reduce((acc, curr) => acc + (curr.clicks.filter(c => c === link).length > 0 ? 1 : 0), 0)
   }))
 
   return <Modal opened={!!campaign} onClose={onClose} title="Campaign Details" size="auto">
@@ -42,13 +42,13 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Unique Opens</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.reduce((acc, curr) => acc + curr.opens > 0 ? 1 : 0, 0)}
+          {campaign?.users.reduce((acc, curr) => acc + (curr.opens > 0 ? 1 : 0), 0)}
         </Text>
       </Card>
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Unique Clicks</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.reduce((acc, curr) => acc + curr.clicks.length > 0 ? 1 : 0, 0)}
+          {campaign?.users.reduce((acc, curr) => acc + (curr.clicks.length > 0 ? 1 : 0), 0)}
         </Text>
       </Card>
     </Flex>
@@ -106,8 +106,8 @@ export default function Campaigns() {
         <Table.Tbody>{data.map((elem: Campaign) =>
           {
             const received = elem.users.length
-            const opened = elem.users.reduce((acc, user) => acc + user.opens > 0 ? 1 : 0, 0)
-            const clicked = elem.users.reduce((acc, user) => acc + user.clicks.length > 0 ? 1 : 0, 0)
+            const opened = elem.users.reduce((acc, user) => acc + (user.opens > 0 ? 1 : 0), 0)
+            const clicked = elem.users.reduce((acc, user) => acc + (user.clicks.length > 0 ? 1 : 0), 0)
 
             return <Table.Tr key={elem.subject}>
               <Table.Td>{new Date(elem.createdAt).toLocaleDateString()}</Table.Td>

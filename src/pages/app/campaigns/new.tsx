@@ -5,6 +5,22 @@ import { TextInput, Textarea, Flex, Box, Card, Button } from '@mantine/core';
 export default function NewCampaign() {
   const [subject, setSuject] = useState('');
   const [html, setHtml] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const sendCampaign = () => {
+    setLoading(true)
+    fetch('/api/campaigns', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        subject,
+        html
+      })
+    })
+    .finally(() => setLoading(false))
+  }
 
   return (
     <Layout title="Campaigns" isLoading={false}>
@@ -24,7 +40,7 @@ export default function NewCampaign() {
           />
           {/* GROUPS */}
 
-          <Button>
+          <Button loading={loading} onClick={sendCampaign}>
             Send now
           </Button>
         </Box>

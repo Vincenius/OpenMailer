@@ -21,8 +21,8 @@ export class SubscriberDAO {
     this.collection = db.collection<Subscriber>('subscribers');
   }
 
-  async getAll(): Promise<Subscriber[] | []> {
-    return await this.collection.find().toArray();
+  async getAll(query: Object): Promise<Subscriber[] | []> {
+    return await this.collection.find(query).toArray();
   }
 
   async getByQuery(query: Object): Promise<Subscriber> {

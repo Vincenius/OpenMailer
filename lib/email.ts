@@ -6,8 +6,14 @@ import welcomeTemplate, {
   campaignId as welcomeCampaignId,
   subject as welcomeSubject,
 } from './templates/welcome'
+import { getPixelHtml } from './templates/tracking-pixel'
 
 // https://nodemailer.com/dkim/ TODO SETUP DKIM
+
+type TemplateProps = {
+  userId: string;
+  templateId: string;
+};
 
 const transporter = nodemailer.createTransport({
   host: "mail.privateemail.com",
@@ -38,7 +44,7 @@ export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => 
   const htmlOutput = mjml2html(mjml)
   const html = htmlOutput.html
 
-  return sendEmail(to, subject, html, 'confirmation')
+  return sendEmail(to, subject, html)
 }
 
 export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
@@ -47,12 +53,18 @@ export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
   const htmlOutput = mjml2html(injectedLinksMjml)
   const html = htmlOutput.html
 
-  return sendEmail(to, welcomeSubject, html, welcomeCampaignId)
+  return sendEmail(to, welcomeSubject, html)
 }
 
-// todo send template / email
+export const sendCampaign = async (to: string, subject: string, html: string, props: TemplateProps) => {
+  const injectedLinksHtml = mapLinks(html, props.userId, props.templateId)
+  const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId })
+  const finalHtml = injectedLinksHtml.replace('</body>', `${trackingPixel}</body>`)
 
-const sendEmail = async (to: string, subject: string, html: string, campaignId: string) => {
+  return sendEmail(to, subject, finalHtml)
+}
+
+const sendEmail = async (to: string, subject: string, html: string) => {
   const result = await transporter.sendMail({
     from: `"${process.env.EMAIL_USER}" <${process.env.EMAIL_USER}>`,
     to: `"${to}" <${to}>`,
@@ -62,14 +74,15 @@ const sendEmail = async (to: string, subject: string, html: string, campaignId: 
 
   // TODO proper logging
   if (result.accepted[0]) {
-    console.info('Successfully send email:', subject, result);
+    // console.info('Successfully send email:', subject, result);
+    return 'success';
   } else if (result.rejected[0]) {
     console.error('Failed to send email:', subject, result);
+    return 'rejected';
   } else {
     console.error('Unexpected error on sending email:', subject, result);
+    return 'errored';
   }
-
-  return Promise.resolve()
 }
 
 export default sendEmail

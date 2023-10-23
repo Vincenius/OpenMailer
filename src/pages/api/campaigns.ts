@@ -3,8 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import withMongoDB, { CustomRequest } from '../../../lib/db';
 import withAuth from '../../../lib/auth';
 import { CampaignDAO, Campaign } from '../../../lib/models/campaigns'
-import { validate } from 'jsonschema';
-import { sendConfirmationEmail } from '../../../lib/email';
+import { SubscriberDAO, Subscriber } from '../../../lib/models/subscriber'
 
 type Result = {
   message: string,
@@ -22,11 +21,35 @@ async function getCampaigns(req: CustomRequest, res: NextApiResponse<Campaign[] 
 }
 
 async function sendCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
-  console.log('CALLED', req.body)
-  // create campaign
-  // trigger another api (recursive / with queue??)
-  // return campaign id
-  // fetch on frontend to see status of sending
+  const campaignDao = new CampaignDAO(req.db);
+  const subscriberDAO = new SubscriberDAO(req.db);
+  const subscribers = await subscriberDAO.getAll({ confirmed: true });
+  const newCampaignId = uuidv4();
+
+  await campaignDao.create({
+    id: newCampaignId,
+    createdAt: new Date(),
+    subject: req.body.subject,
+    html: req.body.html,
+    users: subscribers.map(s => ({
+      id: (s._id || '').toString(),
+      status: 'pending',
+      opens: 0,
+      clicks: [],
+    }))
+  })
+
+  fetch(`${process.env.BASE_URL}/api/send`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      api_key: process.env.API_KEY,
+      campaignId: newCampaignId,
+    }),
+  })
+
   res.status(200).json({ message:'success' })
 }
 
