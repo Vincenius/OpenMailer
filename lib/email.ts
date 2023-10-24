@@ -8,8 +8,6 @@ import welcomeTemplate, {
 } from './templates/welcome'
 import { getPixelHtml } from './templates/tracking-pixel'
 
-// https://nodemailer.com/dkim/ TODO SETUP DKIM
-
 type TemplateProps = {
   userId: string;
   templateId: string;
@@ -23,7 +21,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
-});
+  dkim: {
+    domainName: "webdev.town",
+    keySelector: "2023",
+    privateKey: process.env.EMAIL_PRIVATE_KEY,
+  }
+} as nodemailer.TransportOptions);
 
 const mapLinks = (mjml: string, userId: string, campaignId: string) => {
   let updatedMjml = mjml;
@@ -66,8 +69,8 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
 
 const sendEmail = async (to: string, subject: string, html: string) => {
   const result = await transporter.sendMail({
-    from: `"${process.env.EMAIL_USER}" <${process.env.EMAIL_USER}>`,
-    to: `"${to}" <${to}>`,
+    from: `WebDev Town <${process.env.EMAIL_USER}>`,
+    to: `${to} <${to}>`,
     subject,
     html,
   });

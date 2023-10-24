@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/mjml": "^4.7.2",
     "@types/node": "^20.8.5",
-    "@types/nodemailer": "^6.4.11",
+    "@types/nodemailer": "^6.4.13",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.5",
