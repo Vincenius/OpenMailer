@@ -11,6 +11,7 @@ export interface Subscriber {
   received: number,
   opened: number,
   clicked: number,
+  location?: string;
   unsubscribedAt?: Date,
 }
 

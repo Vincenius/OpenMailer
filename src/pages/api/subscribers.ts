@@ -13,7 +13,7 @@ type Error = {
 async function getSubscribers(req: CustomRequest, res: NextApiResponse<Subscriber[] | Error>) {
   try {
     const subscriberDAO = new SubscriberDAO(req.db);
-    const subscribers = await subscriberDAO.getAll();
+    const subscribers = await subscriberDAO.getAll({});
     res.status(200).json(subscribers)
   } catch (e) {
     console.error(e)
