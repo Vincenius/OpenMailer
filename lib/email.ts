@@ -1,5 +1,5 @@
 import mjml2html from 'mjml'
-import nodemailer from 'nodemailer'
+import nodemailer, { SentMessageInfo } from 'nodemailer'
 import confirmationTemplate, { EmailProps as ConfirmProps } from './templates/confirmation'
 import welcomeTemplate, {
   EmailProps as WelcomeProps,
@@ -68,12 +68,12 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
 }
 
 const sendEmail = async (to: string, subject: string, html: string) => {
-  const result = await transporter.sendMail({
+  const result: SentMessageInfo = await transporter.sendMail({
     from: `WebDev Town <${process.env.EMAIL_USER}>`,
     to: `${to} <${to}>`,
     subject,
     html,
-  });
+  }); // TODo fix tpyes
 
   // TODO proper logging
   if (result.accepted[0]) {
