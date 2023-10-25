@@ -89,7 +89,7 @@ async function handler(
     });
 
     res.status(200).end()
-  } else
+  } else {
     res.status(405).json({ message: 'Method not allowed' })
   }
 
