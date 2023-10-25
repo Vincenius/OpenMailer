@@ -20,6 +20,7 @@
     "mongodb": "^6.1.0",
     "next": "13.5.4",
     "next-auth": "^4.23.2",
+    "nextjs-cors": "^2.1.2",
     "nodemailer": "^6.9.6",
     "react": "^18",
     "react-dom": "^18",

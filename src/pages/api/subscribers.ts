@@ -1,5 +1,6 @@
 import type { NextApiResponse } from 'next'
 import { v4 as uuidv4 } from 'uuid';
+import NextCors from 'nextjs-cors';
 import withMongoDB, { CustomRequest } from '../../../lib/db';
 import withAuth from '../../../lib/auth';
 import { SubscriberDAO, Subscriber } from '../../../lib/models/subscriber'
@@ -71,6 +72,13 @@ async function handler(
   if (req.method === 'GET') {
     await withAuth(req, res, getSubscribers)
   } else if (req.method === 'POST') {
+    await NextCors(req, res, {
+      // Options
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      origin: process.env.CORS_ORIGIN,
+      optionsSuccessStatus: 200,
+    });
+
     await createSubscriber(req, res)
   } else {
     res.status(405).json({ message: 'Method not allowed' })

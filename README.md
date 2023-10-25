@@ -1,8 +1,20 @@
-# Simple Mailer
+# Simple Mailer [work in progress]
 
-A lightweigt Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
+A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
-## Usage
+## Features
+
+- a POST endpoint for subscribing
+
+- double opt-in and unsubscribe logic
+
+- sending plain HTML campaigns
+
+- click & open rate tracking per campaing & subscriber
+
+- click statistics for links
+
+## Setup
 
 1. Install dependencies with `npm i` or `yarn`
 

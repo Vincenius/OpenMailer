@@ -73,7 +73,7 @@ const sendEmail = async (to: string, subject: string, html: string) => {
     to: `${to} <${to}>`,
     subject,
     html,
-  }); // TODo fix tpyes
+  });
 
   // TODO proper logging
   if (result.accepted[0]) {
