@@ -18,7 +18,6 @@ async function handler(
       { _id: new ObjectId(id) },
       { unsubscribedAt: new Date() }
     );
-    console.log('YOYOOY', req.query.id)
 
     res.status(200).json({ message: 'Successfully unsubscribed'})
   } else {

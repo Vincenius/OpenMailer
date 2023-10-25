@@ -7,6 +7,7 @@ import welcomeTemplate, {
   subject as welcomeSubject,
 } from './templates/welcome'
 import { getPixelHtml } from './templates/tracking-pixel'
+import getUnsubscribe from './templates/unsubscribe'
 
 type TemplateProps = {
   userId: string;
@@ -62,7 +63,8 @@ export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
 export const sendCampaign = async (to: string, subject: string, html: string, props: TemplateProps) => {
   const injectedLinksHtml = mapLinks(html, props.userId, props.templateId)
   const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId })
-  const finalHtml = injectedLinksHtml.replace('</body>', `${trackingPixel}</body>`)
+  const unsubscribeLink = getUnsubscribe({ userId: props.userId })
+  const finalHtml = injectedLinksHtml.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`)
 
   return sendEmail(to, subject, finalHtml)
 }
