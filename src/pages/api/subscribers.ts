@@ -74,13 +74,22 @@ async function handler(
   } else if (req.method === 'POST') {
     await NextCors(req, res, {
       // Options
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      methods: ['GET', 'POST'],
       origin: process.env.CORS_ORIGIN,
       optionsSuccessStatus: 200,
     });
 
     await createSubscriber(req, res)
-  } else {
+  } else if (req.method === 'OPTIONS') {
+    await NextCors(req, res, {
+      // Options
+      methods: ['GET', 'POST'],
+      origin: process.env.CORS_ORIGIN,
+      optionsSuccessStatus: 200,
+    });
+
+    res.status(200).end()
+  } else
     res.status(405).json({ message: 'Method not allowed' })
   }
 
