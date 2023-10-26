@@ -1,9 +1,11 @@
 import useSWR from 'swr'
 import { Table, ThemeIcon, Tooltip, Card, Flex, Text } from '@mantine/core';
 import { IconCheck, IconX, IconDots } from '@tabler/icons-react';
+import NumberCard from '@/components/NumberCard';
 import Layout from './Layout'
 import fetcher from '../../utils/fetcher'
 import { Subscriber } from '../../../lib/models/subscriber';
+
 
 export default function Subscribers() {
   const { data = [], error, isLoading } = useSWR('/api/subscribers', fetcher)
@@ -11,10 +13,7 @@ export default function Subscribers() {
   return (
     <Layout title="Subscribers" isLoading={isLoading}>
       <Flex mb="lg">
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Text>Subscriber Count</Text>
-          <Text size="xl" fw={700}>{data.length}</Text>
-        </Card>
+        <NumberCard title="Subscriber Count" count={data.length} />
       </Flex>
       <Table striped>
         <Table.Thead>

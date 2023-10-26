@@ -15,7 +15,7 @@ async function createCampaign(req: CustomRequest, res: NextApiResponse<Result>) 
 
   const campaign = await campaignDao.getByQuery({ id: req.body.campaignId })
   const allPendingUsers = campaign.users.filter(u => u.status === 'pending')
-  const sendingUsers = allPendingUsers.splice(0, 3)
+  const sendingUsers = allPendingUsers.splice(0, 10)
 
   const promises = sendingUsers.map(async u => {
     const query = { _id: new ObjectId(u.id) }

@@ -33,6 +33,11 @@ export class CampaignDAO {
     return result[0];
   }
 
+  async getLatest(): Promise<Campaign | null> {
+    const result = await this.collection.findOne({}, {sort: {createdAt: -1}})
+    return result
+  }
+
   async addUserByQuery(query: Object, update: User): Promise<WithId<Campaign> | null> {
     const result = await this.collection.findOneAndUpdate(
       query,

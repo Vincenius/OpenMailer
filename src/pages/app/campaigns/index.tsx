@@ -5,13 +5,13 @@ import { Table, Tooltip, ActionIcon, Modal, Text, Card, Flex, Button } from '@ma
 import { IconEye } from '@tabler/icons-react'
 import Layout from '../Layout'
 import fetcher from '../../../utils/fetcher'
-import { Campaign, User } from '../../../../lib/models/campaigns';
+import { getOpens, getUniqueClicks } from '../../../utils/campaign'
+import { Campaign } from '../../../../lib/models/campaigns';
 
 type CampaignModalProps = {
   campaign: Campaign | null,
   onClose: () => void,
 };
-
 
 const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
   const regex = /href="([^"]+)"/g;
@@ -28,7 +28,7 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
   const linkTableData = uniqueLinks?.map((link: string) => ({
     link,
     totalClicks: campaign?.users?.reduce((acc, curr) => acc + curr.clicks.filter(c => c === link).length, 0),
-    uniqueClicks: campaign?.users?.reduce((acc, curr) => acc + (curr.clicks.filter(c => c === link).length > 0 ? 1 : 0), 0)
+    uniqueClicks: getUniqueClicks(campaign)
   }))
 
   return <Modal opened={!!campaign} onClose={onClose} title="Campaign Details" size="auto">
@@ -42,13 +42,13 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Unique Opens</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.reduce((acc, curr) => acc + (curr.opens > 0 ? 1 : 0), 0)}
+          {getOpens(campaign)}
         </Text>
       </Card>
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Unique Clicks</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.reduce((acc, curr) => acc + (curr.clicks.length > 0 ? 1 : 0), 0)}
+          {getUniqueClicks(campaign)}
         </Text>
       </Card>
     </Flex>

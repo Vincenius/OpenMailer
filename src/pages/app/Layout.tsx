@@ -42,7 +42,7 @@ export default function Layout(props: LayoutProps) {
           <AppShell.Header>
             <Flex align="center" style={{ height: '100%' }} ml="lg">
               <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-              <Title size="h3">Simple Mailer</Title>
+              <Title size="h3">Simple Mailer | {props.title}</Title>
             </Flex>
           </AppShell.Header>
 

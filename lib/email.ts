@@ -8,26 +8,25 @@ import welcomeTemplate, {
 } from './templates/welcome'
 import { getPixelHtml } from './templates/tracking-pixel'
 import getUnsubscribe from './templates/unsubscribe'
+import AWS from 'aws-sdk'
+
+AWS.config.update({
+  accessKeyId: process.env.SES_USER,
+  secretAccessKey: process.env.SES_PASS,
+  region: process.env.SES_REGION,
+});
 
 type TemplateProps = {
   userId: string;
   templateId: string;
 };
 
-const transporter = nodemailer.createTransport({
-  host: "mail.privateemail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  dkim: {
-    domainName: "webdev.town",
-    keySelector: "2023",
-    privateKey: process.env.EMAIL_PRIVATE_KEY,
-  }
-} as nodemailer.TransportOptions);
+let transporter = nodemailer.createTransport({
+  SES: new AWS.SES({
+    apiVersion: '2010-12-01'
+  })
+}); // TODO USE SES https://nodemailer.com/transports/ses/
+// https://stackoverflow.com/questions/23982299/nodemailer-and-amazon-ses
 
 const mapLinks = (mjml: string, userId: string, campaignId: string) => {
   let updatedMjml = mjml;
@@ -77,7 +76,9 @@ const sendEmail = async (to: string, subject: string, html: string) => {
     html,
   });
 
-  // TODO proper logging
+  console.log(result)
+
+  // // TODO proper logging
   if (result.accepted[0]) {
     // console.info('Successfully send email:', subject, result);
     return 'success';

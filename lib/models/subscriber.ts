@@ -31,6 +31,10 @@ export class SubscriberDAO {
     return result[0];
   }
 
+  async getCount(query: Object): Promise<number> {
+    return await this.collection.countDocuments(query);
+  }
+
   async updateByQuery(query: Object, update: Object): Promise<WithId<Subscriber> | null> {
     const result = await this.collection.findOneAndUpdate(
       query,
