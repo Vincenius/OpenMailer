@@ -28,7 +28,7 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
   const linkTableData = uniqueLinks?.map((link: string) => ({
     link,
     totalClicks: campaign?.users?.reduce((acc, curr) => acc + curr.clicks.filter(c => c === link).length, 0),
-    uniqueClicks: getUniqueClicks(campaign)
+    uniqueClicks: campaign?.users?.reduce((acc, curr) => acc + (curr.clicks.filter(c => c === link).length > 0 ? 1 : 0), 0)
   }))
 
   return <Modal opened={!!campaign} onClose={onClose} title="Campaign Details" size="auto">
