@@ -33,7 +33,10 @@ const getDashboardData = async (req: CustomRequest, res: NextApiResponse<Result>
 
   const subscribed = await subscriberDAO.getAll({ "createdAt": { $gte: sevenDaysAgo } })
   const unsubscribed = await subscriberDAO.getAll({ "unsubscribedAt": { $gte: sevenDaysAgo } })
-  const subscriberCount = await subscriberDAO.getCount({})
+  const subscriberCount = await subscriberDAO.getCount({ $and: [
+    { "unsubscribedAt": { $exists: false }},
+    { "confirmed": true },
+  ] })
 
   const currentDate = new Date();
   const subscribers = [];
