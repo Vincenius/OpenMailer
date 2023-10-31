@@ -21,11 +21,26 @@ type TemplateProps = {
   templateId: string;
 };
 
-let transporter = nodemailer.createTransport({
-  SES: new AWS.SES({
-    apiVersion: '2010-12-01'
-  })
-}); // todo add variants for sending
+const transporter = process.env.SENDING_TYPE === 'ses'
+  ? nodemailer.createTransport({
+    SES: new AWS.SES({
+      apiVersion: '2010-12-01'
+    })
+  }) : nodemailer.createTransport({
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    // todo
+    // dkim: process.env.EMAIL_PRIVATE_KEY {
+    //   domainName: "domain",
+    //   keySelector: "subdomain",
+    //   privateKey: process.env.EMAIL_PRIVATE_KEY,
+    // }
+  } as nodemailer.TransportOptions);
 
 const mapLinks = (mjml: string, userId: string, campaignId: string) => {
   let updatedMjml = mjml;
@@ -76,24 +91,24 @@ const sendEmail = async (to: string, subject: string, html: string) => {
       html,
     })
 
+    if (process.env.SENDING_TYPE === 'email') {
+      if (result.accepted[0]) {
+        // console.info('Successfully send email:', subject, result);
+        return 'success';
+      } else if (result.rejected[0]) {
+        console.error('Failed to send email:', subject, result);
+        return 'rejected';
+      } else {
+        console.error('Unexpected error on sending email:', subject, result);
+        return 'errored';
+      }
+    }
+
     return 'success'
   } catch (err) {
     console.error('Unexpected error on sending email:', subject, err);
     return 'errored'
   }
-
-
-  // // TODO move to separate function / with email setting
-  // if (result.accepted[0]) {
-  //   // console.info('Successfully send email:', subject, result);
-  //   return 'success';
-  // } else if (result.rejected[0]) {
-  //   console.error('Failed to send email:', subject, result);
-  //   return 'rejected';
-  // } else {
-  //   console.error('Unexpected error on sending email:', subject, result);
-  //   return 'errored';
-  // }
 }
 
 export default sendEmail
