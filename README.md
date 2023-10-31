@@ -1,4 +1,4 @@
-# Simple Mailer [work in progress]
+# OpenMailer [work in progress]
 
 A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 

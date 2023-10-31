@@ -27,7 +27,7 @@ export default function Layout(props: LayoutProps) {
   return (
     <>
       <Head>
-        <title>Simple Mailer</title>
+        <title>OpenMailer</title>
         <meta name="description" content="todo yoyo" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -42,7 +42,7 @@ export default function Layout(props: LayoutProps) {
           <AppShell.Header>
             <Flex align="center" style={{ height: '100%' }} ml="lg">
               <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-              <Title size="h3">Simple Mailer | {props.title}</Title>
+              <Title size="h3">OpenMailer | {props.title}</Title>
             </Flex>
           </AppShell.Header>
 

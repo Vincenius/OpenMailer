@@ -9,7 +9,7 @@ type Result = {
   message: string,
 }
 
-async function createCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
+async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Result>) {
   const campaignDao = new CampaignDAO(req.db);
   const subscriberDAO = new SubscriberDAO(req.db);
 
@@ -50,7 +50,7 @@ async function handler(
 ) {
   if (req.method === 'POST') {
     if (req.body.api_key === process.env.API_KEY) {
-      await createCampaign(req, res)
+      await handleCampaignSend(req, res)
     } else {
       res.status(401).json({ message: 'Unauthorized' })
     }

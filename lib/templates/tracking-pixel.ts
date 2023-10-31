@@ -10,8 +10,8 @@ const getImage = ({ userId = '', emailId = '' }: TrackingProps) => {
 export const getPixelHtml = ({ userId = '', emailId = '' }: TrackingProps) => {
   return `<img
     src="${process.env.BASE_URL}/api/pixel/${userId}/${emailId}"
-    style="border:0;display:block;outline:=none;text-decoration:none;height:auto;width:100%;font-size:13px;"
-    width="550" height="auto"
+    style="border:0;display:block;outline:=none;text-decoration:none;height:auto;width:10px;font-size:13px;"
+    width="10" height="auto"
   />`
 }
 

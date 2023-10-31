@@ -1,5 +1,5 @@
 import mjml2html from 'mjml'
-import nodemailer, { SentMessageInfo } from 'nodemailer'
+import nodemailer, { SentMessageInfo } from 'nodemailer'
 import confirmationTemplate, { EmailProps as ConfirmProps } from './templates/confirmation'
 import welcomeTemplate, {
   EmailProps as WelcomeProps,
@@ -69,26 +69,32 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
 }
 
 const sendEmail = async (to: string, subject: string, html: string) => {
-  const result: SentMessageInfo = await transporter.sendMail({
-    from: `WebDev Town <${process.env.EMAIL_USER}>`,
-    to: `${to} <${to}>`,
-    subject,
-    html,
-  });
+  try {
+    const result: SentMessageInfo = await transporter.sendMail({
+      from: `WebDev Town <${process.env.EMAIL_USER}>`,
+      to: `${to} <${to}>`,
+      subject,
+      html,
+    })
 
-  console.log(result)
-
-  // // TODO proper logging
-  if (result.accepted[0]) {
-    // console.info('Successfully send email:', subject, result);
-    return 'success';
-  } else if (result.rejected[0]) {
-    console.error('Failed to send email:', subject, result);
-    return 'rejected';
-  } else {
-    console.error('Unexpected error on sending email:', subject, result);
-    return 'errored';
+    return 'success'
+  } catch (err) {
+    console.error('Unexpected error on sending email:', subject, err);
+    return 'errored'
   }
+
+
+  // // TODO move to separate function / with email setting
+  // if (result.accepted[0]) {
+  //   // console.info('Successfully send email:', subject, result);
+  //   return 'success';
+  // } else if (result.rejected[0]) {
+  //   console.error('Failed to send email:', subject, result);
+  //   return 'rejected';
+  // } else {
+  //   console.error('Unexpected error on sending email:', subject, result);
+  //   return 'errored';
+  // }
 }
 
 export default sendEmail
