@@ -11,11 +11,27 @@ type Error = {
   message: string,
 }
 
-async function getSubscribers(req: CustomRequest, res: NextApiResponse<Subscriber[] | Error>) {
+type Response = {
+  subscribers: Subscriber[],
+  total: number,
+}
+
+async function getSubscribers(req: CustomRequest, res: NextApiResponse<Response | Error>) {
   try {
+    const { page = '1' } = req.query;
+    const p = Array.isArray(page)
+      ? parseInt(page[0], 10)
+      : parseInt(page, 10);
+
     const subscriberDAO = new SubscriberDAO(req.db);
-    const subscribers = await subscriberDAO.getAll({});
-    res.status(200).json(subscribers)
+    const [total, subscribers] = await Promise.all([
+      subscriberDAO.getCount({}),
+      subscriberDAO.getAll({}, p),
+    ])
+    res.status(200).json({
+      subscribers,
+      total,
+    })
   } catch (e) {
     console.error(e)
     res.status(500).json({ message: 'Internal Server Error' })

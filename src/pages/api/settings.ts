@@ -1,19 +1,20 @@
 import type { NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'
 import withMongoDB, { CustomRequest } from '../../../lib/db'
-import { Account, AccountDAO } from '../../../lib/models/accounts'
+import { Settings, SettingsDAO } from '../../../lib/models/settings'
 
 type Result = {
   message: string,
 }
 
+// rename settings
 async function handler(
   req: CustomRequest,
-  res: NextApiResponse<Result | Account[]>
+  res: NextApiResponse<Result | Settings[]>
 ) {
   if (req.method === 'GET') {
-    const accountDAO = new AccountDAO(req.db);
-    const result = await accountDAO.getAll({});
+    const settingsDAO = new SettingsDAO(req.db);
+    const result = await settingsDAO.getAll({});
 
     res.status(200).json(result)
   } else if (req.method === 'POST') {

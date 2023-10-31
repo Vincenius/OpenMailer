@@ -25,8 +25,7 @@ let transporter = nodemailer.createTransport({
   SES: new AWS.SES({
     apiVersion: '2010-12-01'
   })
-}); // TODO USE SES https://nodemailer.com/transports/ses/
-// https://stackoverflow.com/questions/23982299/nodemailer-and-amazon-ses
+}); // todo add variants for sending
 
 const mapLinks = (mjml: string, userId: string, campaignId: string) => {
   let updatedMjml = mjml;

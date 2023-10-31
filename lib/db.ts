@@ -13,13 +13,16 @@ if (!process.env.MONGODB_URI) {
 const uri = process.env.MONGODB_URI || ''
 const options = {}
 
-const withMongoDB = (handler: (req: CustomRequest, res: NextApiResponse) => Promise<void>) => {
+const withMongoDB = (
+  handler: (req: CustomRequest, res: NextApiResponse) => Promise<void>,
+  databaseName?: string,
+) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     let mongoClient
     try {
       const client = new MongoClient(uri, options);
       mongoClient= await client.connect();
-      const db = client.db(process.env.DB_NAME); // Use your specific database name if applicable
+      const db = client.db(databaseName || process.env.DB_NAME);
 
       // Augment the request object with the MongoDB client and database
       const customReq: CustomRequest = Object.assign(req, {

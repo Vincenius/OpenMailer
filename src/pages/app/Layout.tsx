@@ -28,7 +28,7 @@ export default function Layout(props: LayoutProps) {
     <>
       <Head>
         <title>OpenMailer</title>
-        <meta name="description" content="todo yoyo" />
+        <meta name="description" content="A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc..." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

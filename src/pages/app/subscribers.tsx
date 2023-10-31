@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import useSWR from 'swr'
-import { Table, ThemeIcon, Tooltip, Card, Flex, Text } from '@mantine/core';
+import { Table, ThemeIcon, Tooltip, Flex, Pagination } from '@mantine/core';
 import { IconCheck, IconX, IconDots } from '@tabler/icons-react';
 import NumberCard from '@/components/NumberCard';
 import Layout from './Layout'
@@ -8,12 +9,14 @@ import { Subscriber } from '../../../lib/models/subscriber';
 
 
 export default function Subscribers() {
-  const { data = [], error, isLoading } = useSWR('/api/subscribers', fetcher)
+  const [page, setPage] = useState(1)
+  const { data = {}, error, isLoading } = useSWR(`/api/subscribers?page=${page}`, fetcher)
+  const { total = 0, subscribers = [] } = data
 
   return (
     <Layout title="Subscribers" isLoading={isLoading}>
       <Flex mb="lg">
-        <NumberCard title="Subscriber Count" count={data.length} />
+        <NumberCard title="Subscriber Count" count={total} />
       </Flex>
       <Table striped>
         <Table.Thead>
@@ -26,7 +29,7 @@ export default function Subscribers() {
             <Table.Th>Clicked</Table.Th>
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody>{data
+        <Table.Tbody>{subscribers
           .sort((a: Subscriber, b: Subscriber) => new Date(b.createdAt).getTime() > new Date(a.createdAt).getTime())
           .map((elem: Subscriber) =>
             <Table.Tr key={elem.email}>
@@ -57,6 +60,8 @@ export default function Subscribers() {
           )}
         </Table.Tbody>
       </Table>
+
+      { total > 50 && <Pagination value={page} onChange={setPage} total={total / 50} mt="md" /> }
     </Layout>
   )
 }

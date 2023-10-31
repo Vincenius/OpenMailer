@@ -8,6 +8,8 @@ import fetcher from '../../../utils/fetcher'
 import { getOpens, getUniqueClicks } from '../../../utils/campaign'
 import { Campaign } from '../../../../lib/models/campaigns';
 
+// https://mantine.dev/core/pagination/
+
 type CampaignModalProps = {
   campaign: Campaign | null,
   onClose: () => void,
@@ -36,7 +38,9 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Received</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.length}
+          {campaign?.users.length === campaign?.users?.filter(u => u.status !== 'pending').length
+            ? campaign?.users.length
+            : `${campaign?.users?.filter(u => u.status !== 'pending').length}/${campaign?.users.length}`}
         </Text>
       </Card>
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">

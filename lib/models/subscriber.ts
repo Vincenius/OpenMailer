@@ -22,8 +22,15 @@ export class SubscriberDAO {
     this.collection = db.collection<Subscriber>('subscribers');
   }
 
-  async getAll(query: Object): Promise<Subscriber[] | []> {
-    return await this.collection.find(query).toArray();
+  async getAll(query: Object, page?: number): Promise<Subscriber[] | []> {
+    let cursor = this.collection.find(query).sort({ createdAt: -1 });
+
+    if (page && 50) {
+      const skipAmount = (page - 1) * 50;
+      cursor = cursor.skip(skipAmount).limit(50);
+    }
+
+    return await cursor.toArray();
   }
 
   async getByQuery(query: Object): Promise<Subscriber> {
