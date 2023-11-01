@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Cache-Control', 'no-store')
 
   const { slug = [] } = req.query
@@ -10,7 +10,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     const campaignId = atob(slug[1]);
     const link = atob(slug[2]);
 
-    fetch(`${process.env.BASE_URL}/api/track`, {
+    await fetch(`${process.env.BASE_URL}/api/track`, {
       cache: 'no-store',
       method: 'POST',
       headers: {
