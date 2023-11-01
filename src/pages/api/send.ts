@@ -39,6 +39,8 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
       },
       body: JSON.stringify(req.body),
     })
+
+    await new Promise(r => setTimeout(r, 1000))
   }
 
   res.status(200).json({ message:'success' })

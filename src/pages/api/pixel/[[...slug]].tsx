@@ -6,7 +6,7 @@ export const config = {
   runtime: 'edge',
 }
 
-const handler = (req: NextApiRequest) => {
+const handler = async (req: NextApiRequest) => {
   const {searchParams} = new URL(req.url || '');
   const params = searchParams.getAll('slug')
 
@@ -14,7 +14,7 @@ const handler = (req: NextApiRequest) => {
     const userId = params[0];
     const campaignId = params[1];
 
-    fetch(`${process.env.BASE_URL}/api/track`, {
+    await fetch(`${process.env.BASE_URL}/api/track`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

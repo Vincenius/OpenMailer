@@ -8,6 +8,8 @@ import fetcher from '../../../utils/fetcher'
 import { getOpens, getUniqueClicks } from '../../../utils/campaign'
 import { Campaign } from '../../../../lib/models/campaigns';
 
+// https://mantine.dev/core/pagination/
+
 type CampaignModalProps = {
   campaign: Campaign | null,
   onClose: () => void,
@@ -36,7 +38,9 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
         <Text>Received</Text>
         <Text size="xl" fw={700}>
-          {campaign?.users.length}
+          {campaign?.users.length === campaign?.users?.filter(u => u.status !== 'pending').length
+            ? campaign?.users.length
+            : `${campaign?.users?.filter(u => u.status !== 'pending').length}/${campaign?.users.length}`}
         </Text>
       </Card>
       <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
@@ -108,11 +112,12 @@ export default function Campaigns() {
             const received = elem.users.length
             const opened = elem.users.reduce((acc, user) => acc + (user.opens > 0 ? 1 : 0), 0)
             const clicked = elem.users.reduce((acc, user) => acc + (user.clicks.length > 0 ? 1 : 0), 0)
+            const pending = elem.users.filter(u => u.status === 'pending').length
 
             return <Table.Tr key={elem.subject}>
               <Table.Td>{new Date(elem.createdAt).toLocaleDateString()}</Table.Td>
               <Table.Td>{elem.subject}</Table.Td>
-              <Table.Td>{received}</Table.Td>
+              <Table.Td>{pending === 0 ? received : `${received - pending} / ${received}`}</Table.Td>
               <Table.Td>
                 <Tooltip label={opened}>
                   <span>{opened === 0 ? 0 : (opened/received * 100).toFixed(1)}</span>
