@@ -1,23 +1,25 @@
 import { useEffect } from 'react'
+import useSWR from 'swr'
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/navigation'
+import { LoadingOverlay } from '@mantine/core'
+import fetcher from '../utils/fetcher'
 
 export default function Home() {
+  const { data: { exists } = {}, error, isLoading } = useSWR('/api/admin', fetcher)
   const { data: session } = useSession()
   const router = useRouter()
 
-  // todo check init endpoint if accounts exist
-  // if not go to init page (create it) to create first account and newsletter
-
   useEffect(() => {
     if (session !== undefined) {
-      if (session === null) {
-        router.push("/api/auth/signin")
-      } else {
+      if (session === null && !isLoading) {
+        const path = exists ? '/api/auth/signin' : '/setup'
+        router.push(path)
+      } else if (session !== null) {
         router.push("/app")
       }
     }
-  }, [session, router])
+  }, [session, router, isLoading, exists])
 
-  return <></>
+  return <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
 }

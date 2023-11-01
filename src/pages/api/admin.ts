@@ -1,21 +1,22 @@
 import type { NextApiResponse } from 'next'
 import withMongoDB, { CustomRequest } from '../../../lib/db'
-import { Accounts, AccountsDAO } from '../../../lib/models/accounts'
+import { Accounts, AdminDAO } from '../../../lib/models/admin'
 
 type Result = {
   message: string,
+} | {
+  exists: boolean,
 }
 
-// rename settings
 async function handler(
   req: CustomRequest,
-  res: NextApiResponse<Result | Accounts[]>
+  res: NextApiResponse<Result>
 ) {
   if (req.method === 'GET') {
-    const accountsDAO = new AccountsDAO(req.db); // withMongoDB
-    const result = await accountsDAO.getAll({});
+    const adminDAO = new AdminDAO(req.db);
+    const settings = await adminDAO.getSettings();
 
-    res.status(200).json(result)
+    res.status(200).json({ exists: !!(settings && settings.initialized) })
   } else if (req.method === 'POST') {
     // allow first without auth
     // then only with auth
