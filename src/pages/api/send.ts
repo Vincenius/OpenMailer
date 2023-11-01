@@ -14,8 +14,8 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
   const subscriberDAO = new SubscriberDAO(req.db);
 
   const campaign = await campaignDao.getByQuery({ id: req.body.campaignId })
-  const allPendingUsers = campaign.users.filter(u => u.status === 'pending')
-  const sendingUsers = allPendingUsers.splice(0, 10)
+  const allPendingUsers = campaign.users.filter(u => u.status !== 'success')
+  const sendingUsers = allPendingUsers.splice(0, 20)
 
   const promises = sendingUsers.map(async u => {
     const query = { _id: new ObjectId(u.id) }
@@ -31,17 +31,15 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
 
   await Promise.all(promises)
 
-  if (allPendingUsers.length > 0) { // call recursively if pending users left
-    fetch(`${process.env.BASE_URL}/api/send`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(req.body),
-    })
-
-    await new Promise(r => setTimeout(r, 1000))
-  }
+  // if (allPendingUsers.length > 0) { // call recursively if pending users left
+  //   fetch(`${process.env.BASE_URL}/api/send`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(req.body),
+  //   })
+  // }
 
   res.status(200).json({ message:'success' })
 }

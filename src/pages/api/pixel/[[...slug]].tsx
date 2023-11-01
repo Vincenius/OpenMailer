@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest) => {
     const userId = params[0];
     const campaignId = params[1];
 
-    await fetch(`${process.env.BASE_URL}/api/track`, {
+    fetch(`${process.env.BASE_URL}/api/track`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

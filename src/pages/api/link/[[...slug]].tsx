@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const campaignId = atob(slug[1]);
     const link = atob(slug[2]);
 
-    await fetch(`${process.env.BASE_URL}/api/track`, {
+    fetch(`${process.env.BASE_URL}/api/track`, {
       cache: 'no-store',
       method: 'POST',
       headers: {
