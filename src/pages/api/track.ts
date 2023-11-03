@@ -8,16 +8,6 @@ type Result = {
   message: string,
 }
 
-async function trackOpen(req: CustomRequest, res: NextApiResponse<Result>) {
-  try {
-    // track
-    res.status(200).json({ message: 'success' })
-  } catch (e) {
-    console.error(e)
-    res.status(500).json({ message: 'Internal Server Error' })
-  }
-}
-
 async function handler(
   req: CustomRequest,
   res: NextApiResponse<Result>

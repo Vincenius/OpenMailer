@@ -112,11 +112,12 @@ export default function Campaigns() {
             const received = elem.users.length
             const opened = elem.users.reduce((acc, user) => acc + (user.opens > 0 ? 1 : 0), 0)
             const clicked = elem.users.reduce((acc, user) => acc + (user.clicks.length > 0 ? 1 : 0), 0)
+            const pending = elem.users.filter(u => u.status !== 'success').length
 
             return <Table.Tr key={elem.subject}>
               <Table.Td>{new Date(elem.createdAt).toLocaleDateString()}</Table.Td>
               <Table.Td>{elem.subject}</Table.Td>
-              <Table.Td>{received}</Table.Td>
+              <Table.Td>{pending === 0 ? received : `${received - pending} / ${received}`}</Table.Td>
               <Table.Td>
                 <Tooltip label={opened}>
                   <span>{opened === 0 ? 0 : (opened/received * 100).toFixed(1)}</span>

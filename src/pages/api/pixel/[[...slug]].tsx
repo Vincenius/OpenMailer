@@ -6,7 +6,7 @@ export const config = {
   runtime: 'edge',
 }
 
-const handler = (req: NextApiRequest) => {
+const handler = async (req: NextApiRequest) => {
   const {searchParams} = new URL(req.url || '');
   const params = searchParams.getAll('slug')
 
