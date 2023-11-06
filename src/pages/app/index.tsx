@@ -15,7 +15,6 @@ type SubChartResult = {
 
 export default function Home() {
   const { data = {}, error, isLoading } = useSWR('/api/dashboard', fetcher)
-
   const subscribers: SubChartResult[] = data.subscribers || []
 
   const gradientOffset = () => {

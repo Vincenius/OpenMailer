@@ -11,13 +11,14 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
-    if (session !== undefined) {
-      if (session === null && !isLoading) {
-        const path = exists ? '/api/auth/signin' : '/setup'
-        router.push(path)
-      } else if (session !== null) {
-        router.push("/app")
-      }
+    if (session !== undefined && !isLoading) {
+      const path = exists
+        ? session !== null
+          ? '/api/auth/signin'
+          : '/app'
+        : '/setup'
+
+      router.push(path)
     }
   }, [session, router, isLoading, exists])
 

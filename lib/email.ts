@@ -35,6 +35,8 @@ const transporter = process.env.SENDING_TYPE === 'ses'
       pass: process.env.EMAIL_PASSWORD,
     },
     // todo
+    // var encryptedAES = CryptoJS.AES.encrypt("Message", "My Secret Passphrase");
+    // var decryptedBytes = CryptoJS.AES.decrypt(encryptedAES, "My Secret Passphrase");
     // dkim: process.env.EMAIL_PRIVATE_KEY {
     //   domainName: "domain",
     //   keySelector: "subdomain",

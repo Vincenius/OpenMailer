@@ -1,10 +1,12 @@
 import { ReactNode, useEffect } from 'react'
+import useSWR from 'swr'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from "next-auth/react"
 import { useDisclosure } from '@mantine/hooks'
 import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay } from '@mantine/core'
+import fetcher from '../../utils/fetcher'
 
 type LayoutProps = {
   title: String,
@@ -16,13 +18,20 @@ export default function Layout(props: LayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const { asPath: path } = useRouter();
   const { data: session } = useSession();
+  const { data: { exists } = {}, isLoading } = useSWR('/api/admin', fetcher)
   const router = useRouter()
 
   useEffect(() => {
-    if (session !== undefined && session === null) {
-      router.push("/api/auth/signin")
+    if (session !== undefined && !isLoading) {
+      if (!exists || session === null) {
+        const path = exists
+          ? '/api/auth/signin'
+          : '/setup'
+
+        router.push(path)
+      }
     }
-  }, [session, router])
+  }, [session, router, isLoading, exists])
 
   return (
     <>

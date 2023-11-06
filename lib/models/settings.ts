@@ -2,10 +2,11 @@ import { Db, Collection, WithId, ObjectId } from 'mongodb';
 
 export interface Settings {
   _id?: ObjectId,
+  name: string,
   email: string,
-  base_url: string,
-  cors_origin: string,
   confirm_redirect: string,
+  api_key: string,
+  database: string,
   sending_type: string, // 'email' or 'ses'
   ses_user?: string,
   ses_password?: string,

@@ -18,8 +18,7 @@ async function handler(
 
     res.status(200).json(result)
   } else if (req.method === 'POST') {
-    // allow first without auth
-    // then only with auth
+    // todo
   } else {
     res.status(405).json({ message: 'Method not allowed' })
   }

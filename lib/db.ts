@@ -13,6 +13,7 @@ if (!process.env.MONGODB_URI) {
 const uri = process.env.MONGODB_URI || ''
 const options = {}
 
+
 const withMongoDB = (
   handler: (req: CustomRequest, res: NextApiResponse) => Promise<void>,
   databaseName?: string,
