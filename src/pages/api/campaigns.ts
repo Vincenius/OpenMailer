@@ -23,7 +23,10 @@ async function getCampaigns(req: CustomRequest, res: NextApiResponse<Campaign[] 
 async function sendCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
   const campaignDao = new CampaignDAO(req.db);
   const subscriberDAO = new SubscriberDAO(req.db);
-  const subscribers = await subscriberDAO.getAll({ confirmed: true });
+  const subscribers = await subscriberDAO.getAll({ $and: [
+    { "unsubscribedAt": { $exists: false }},
+    { "confirmed": true },
+  ] });
   const newCampaignId = uuidv4();
 
   await campaignDao.create({
