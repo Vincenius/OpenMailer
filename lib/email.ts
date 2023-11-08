@@ -11,8 +11,9 @@ import getUnsubscribe from './templates/unsubscribe'
 import AWS from 'aws-sdk'
 
 AWS.config.update({
+  apiVersion: '2010-12-01',
   accessKeyId: process.env.SES_USER,
-  secretAccessKey: process.env.SES_PASS,
+  secretAccessKey: process.env.SES_PASSWORD,
   region: process.env.SES_REGION,
 });
 
@@ -23,9 +24,7 @@ type TemplateProps = {
 
 const transporter = process.env.SENDING_TYPE === 'ses'
   ? nodemailer.createTransport({
-    SES: new AWS.SES({
-      apiVersion: '2010-12-01'
-    })
+    SES: new AWS.SES()
   }) : nodemailer.createTransport({
     host: "mail.privateemail.com",
     port: 465,
