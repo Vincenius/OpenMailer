@@ -7,11 +7,18 @@ export interface Account {
   role: string, // admin (maybe restricted roles added in future)
 }
 
+export interface Newsletter {
+  _id?: ObjectId,
+  name: string,
+  database: string,
+}
+
 export interface Settings {
   _id?: ObjectId,
   initialized: boolean,
   base_url: string,
-  cross_origin: string,
+  cors_origin: string,
+  newsletters: Newsletter[],
 }
 
 export class AdminDAO {

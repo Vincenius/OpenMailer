@@ -18,6 +18,7 @@ export default function Setup() {
       setFormValues({
         base_url: window.location.origin,
         cors_origin: '*',
+        newsletters: [],
       })
     }
     // todo redirect if not logged in but account exists?

@@ -8,10 +8,9 @@ export interface Settings {
   api_key: string,
   database: string,
   sending_type: string, // 'email' or 'ses'
-  ses_user?: string,
-  ses_password?: string,
+  ses_key?: string,
+  ses_secret?: string,
   ses_region?: string,
-  email_user?: string,
   email_pass?: string,
   email_host?: string,
 }
@@ -41,7 +40,7 @@ export class SettingsDAO {
     return result;
   }
 
-  async create(user: Settings): Promise<void> {
-    await this.collection.insertOne(user);
+  async create(settings: Settings): Promise<void> {
+    await this.collection.insertOne(settings);
   }
 }

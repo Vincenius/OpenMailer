@@ -6,13 +6,13 @@ import { LoadingOverlay } from '@mantine/core'
 import fetcher from '../utils/fetcher'
 
 export default function Home() {
-  const { data: { exists } = {}, error, isLoading } = useSWR('/api/admin', fetcher)
+  const { data: { initialized } = {}, error, isLoading } = useSWR('/api/admin', fetcher)
   const { data: session } = useSession()
   const router = useRouter()
 
   useEffect(() => {
     if (session !== undefined && !isLoading) {
-      const path = exists
+      const path = initialized
         ? session !== null
           ? '/api/auth/signin'
           : '/app'
@@ -20,7 +20,7 @@ export default function Home() {
 
       router.push(path)
     }
-  }, [session, router, isLoading, exists])
+  }, [session, router, isLoading, initialized])
 
   return <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
 }
