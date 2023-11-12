@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import useSWR from 'swr'
 import { Table, Tooltip, ActionIcon, Modal, Text, Card, Flex, Button } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react'
+import { useFetch } from '@/utils/apiMiddleware'
 import Layout from '../Layout'
-import fetcher from '../../../utils/fetcher'
 import { getOpens, getUniqueClicks } from '../../../utils/campaign'
 import { Campaign } from '../../../../lib/models/campaigns';
 
@@ -80,7 +79,7 @@ const DetailsModal = ({ campaign, onClose }: CampaignModalProps) => {
 }
 
 export default function Campaigns() {
-  const { data = [], error, isLoading } = useSWR('/api/campaigns', fetcher)
+  const { data = [], error, isLoading } = useFetch('/api/campaigns')
   const [campaignDetails, setCampaignDetails] = useState<Campaign | null>(null)
 
   const closeDetailsModal = () => {

@@ -1,11 +1,10 @@
 import { Flex, Title } from '@mantine/core'
-import useSWR from 'swr'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 // import styles from '@/styles/Home.module.css'
 import NumberCard from '@/components/NumberCard';
 import Layout from './Layout'
-import fetcher from '../../utils/fetcher'
 import { getOpens, getUniqueClicks, getRate } from '../../utils/campaign';
+import { useFetch } from '../../utils/apiMiddleware'
 
 type SubChartResult = {
   date: string,
@@ -14,7 +13,7 @@ type SubChartResult = {
 }
 
 export default function Home() {
-  const { data = {}, error, isLoading } = useSWR('/api/dashboard', fetcher)
+  const { data = {}, error, isLoading } = useFetch('/api/dashboard')
   const subscribers: SubChartResult[] = data.subscribers || []
 
   const gradientOffset = () => {
@@ -40,8 +39,8 @@ export default function Home() {
     <Layout title="Dashboard" isLoading={isLoading}>
       <Flex mb="xl">
         <NumberCard title="Subscribers" count={data.subscriberCount} />
-        <NumberCard title="Recent Open Rate" count={lastOpened} symbol="%" />
-        <NumberCard title="Recent Click Rate" count={lastClicked} symbol="%" />
+        <NumberCard title="Recent Open Rate" count={lastOpened || 0} symbol="%" />
+        <NumberCard title="Recent Click Rate" count={lastClicked || 0} symbol="%" />
       </Flex>
       <Title size="h4" mb="md">Recent Subscriber Growth</Title>
       <Flex>

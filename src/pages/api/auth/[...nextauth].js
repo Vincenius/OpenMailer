@@ -29,7 +29,6 @@ export const authOptions = {
           hash.update(credentials.password);
           const inputPasswordHash = hash.digest('hex');
 
-          console.log(account, inputPasswordHash)
           if (account && account.password == inputPasswordHash) {
             return { username: credentials.username }
           } else {

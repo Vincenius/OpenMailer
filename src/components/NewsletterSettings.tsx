@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import { Text, TextInput, Flex, Button, SegmentedControl, Popover, Textarea } from '@mantine/core'
-import useSWR from 'swr'
-import { updateFetch } from '../utils/updater'
-import fetcher from '../utils/fetcher'
+import { Text, TextInput, Flex, Button, SegmentedControl, Popover } from '@mantine/core'
+import { useUpdate } from '../utils/apiMiddleware'
 
 type Props = {
   loading: boolean,
   setLoading: (loading: boolean) => void,
+  onSuccess?: () => void,
   database?: string,
 }
 
@@ -14,6 +13,7 @@ const NewsetterSettings = (props: Props) => {
   const { loading, setLoading } = props
   const [formValues, setFormValues] = useState<any>({})
   const [type, setType] = useState('ses')
+  const { triggerUpdate } = useUpdate()
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -21,12 +21,16 @@ const NewsetterSettings = (props: Props) => {
 
     let database = props.database
     if (!database) {
-      const { message } = await updateFetch({ url: '/api/admin', method: 'PUT', body: { name: formValues.name } })
+      const { message } = await triggerUpdate({ url: '/api/admin', method: 'PUT', body: { name: formValues.name }})
       database = message
     }
 
-    updateFetch({ url: '/api/settings', method: 'POST', body: { ...formValues, database } })
-      .finally(() => {
+    triggerUpdate({ url: '/api/settings', method: 'POST', body: { ...formValues, database } })
+      .then(() => {
+        if (props.onSuccess) {
+          props.onSuccess()
+        }
+      }).finally(() => {
         setLoading(false)
       })
   }
@@ -59,16 +63,6 @@ const NewsetterSettings = (props: Props) => {
       onChange={(event) => handleChange(event.currentTarget)}
       required
     />
-
-    <Textarea
-      label="Welcome email (optional)"
-      description="Add HTML if you want to send a welcome email to new subscribers."
-      placeholder="<html>...</html>"
-      mb="md"
-      name="welcome_email"
-      onChange={(event) => handleChange(event.currentTarget)}
-    />
-    {/* preview? */}
 
     <Text size="sm" fw={500}>Sending Type</Text>
     <Text size="xs" mb="xs" c="dimmed">

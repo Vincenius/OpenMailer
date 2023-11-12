@@ -20,6 +20,7 @@ AWS.config.update({
 type TemplateProps = {
   userId: string;
   templateId: string;
+  list: string;
 };
 
 const transporter = process.env.SENDING_TYPE === 'ses'
@@ -43,13 +44,13 @@ const transporter = process.env.SENDING_TYPE === 'ses'
     // }
   } as nodemailer.TransportOptions);
 
-const mapLinks = (mjml: string, userId: string, campaignId: string) => {
+const mapLinks = (mjml: string, userId: string, campaignId: string, list: string,) => {
   let updatedMjml = mjml;
   const regex = /href="([^"]+)"/g;
   let match;
 
   while ((match = regex.exec(mjml)) !== null) {
-    const mappedLink = `href="${process.env.BASE_URL}/api/link/${btoa(userId)}/${btoa(campaignId)}/${btoa(match[1])}"`
+    const mappedLink = `href="${process.env.BASE_URL}/api/link/${btoa(userId)}/${btoa(campaignId)}/${btoa(match[1])}/${btoa(list)}"`
     updatedMjml = updatedMjml.replace(match[0], mappedLink);
   }
 
@@ -62,22 +63,22 @@ export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => 
   const htmlOutput = mjml2html(mjml)
   const html = htmlOutput.html
 
-  return sendEmail(to, subject, html)
+  return sendEmail(to, subject, html) // TODO list?
 }
 
 export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
   const mjml = welcomeTemplate(props)
-  const injectedLinksMjml = mapLinks(mjml, props.userId, welcomeCampaignId)
+  const injectedLinksMjml = mapLinks(mjml, props.userId, welcomeCampaignId, props.list)
   const htmlOutput = mjml2html(injectedLinksMjml)
   const html = htmlOutput.html
 
-  return sendEmail(to, welcomeSubject, html)
+  return sendEmail(to, welcomeSubject, html) // TODO list
 }
 
 export const sendCampaign = async (to: string, subject: string, html: string, props: TemplateProps) => {
-  const injectedLinksHtml = mapLinks(html, props.userId, props.templateId)
-  const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId })
-  const unsubscribeLink = getUnsubscribe({ userId: props.userId })
+  const injectedLinksHtml = mapLinks(html, props.userId, props.templateId, props.list)
+  const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId, list: props.list })
+  const unsubscribeLink = getUnsubscribe({ userId: props.userId, list: props.list })
   const finalHtml = injectedLinksHtml.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`)
 
   return sendEmail(to, subject, finalHtml)
@@ -86,7 +87,7 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
 const sendEmail = async (to: string, subject: string, html: string) => {
   try {
     const result: SentMessageInfo = await transporter.sendMail({
-      from: `WebDev Town <${process.env.EMAIL_USER}>`,
+      from: `WebDev Town <${process.env.EMAIL_USER}>`, // TODO name
       to: `${to} <${to}>`,
       subject,
       html,

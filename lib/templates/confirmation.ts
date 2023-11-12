@@ -1,9 +1,10 @@
 export type EmailProps = {
   confirmationId: string;
+  list: string;
 };
 
-const getEmail = ({ confirmationId }: EmailProps) => {
-  const link = `${process.env.BASE_URL}/api/confirm?id=${confirmationId}`
+const getEmail = ({ confirmationId, list }: EmailProps) => {
+  const link = `${process.env.BASE_URL}/api/confirm?id=${confirmationId}&list=${list}`
 
   return `<mjml>
     <mj-head>

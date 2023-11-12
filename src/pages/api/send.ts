@@ -12,6 +12,7 @@ type Result = {
 async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Result>) {
   const campaignDao = new CampaignDAO(req.db);
   const subscriberDAO = new SubscriberDAO(req.db);
+  const mailingList = req.headers['x-mailing-list']?.toString() || ''
 
   const campaign = await campaignDao.getByQuery({ id: req.body.campaignId })
   const allPendingUsers = campaign.users.filter(u => u.status !== 'success')
@@ -20,7 +21,7 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
   const promises = sendingUsers.map(async u => {
     const query = { _id: new ObjectId(u.id) }
     const user = await subscriberDAO.getByQuery(query)
-    const result = await sendCampaign(user.email, campaign.subject, campaign.html, { userId: u.id, templateId: req.body.campaignId })
+    const result = await sendCampaign(user.email, campaign.subject, campaign.html, { userId: u.id, templateId: req.body.campaignId, list: mailingList })
 
     if (result === 'success') {
       await subscriberDAO.increaseTrack(query, 'received')
@@ -36,6 +37,7 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-mailing-list': mailingList,
       },
       body: JSON.stringify(req.body),
     })

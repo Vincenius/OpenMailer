@@ -46,6 +46,7 @@ async function sendCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-mailing-list': req.headers['x-mailing-list']?.toString() || ''
     },
     body: JSON.stringify({
       api_key: process.env.API_KEY,

@@ -9,7 +9,7 @@ type Result = {
 }
 
 async function handleTestSend(req: CustomRequest, res: NextApiResponse<Result>) {
-  const result = await sendCampaign(req.body.testEmail, req.body.subject, req.body.html, { userId: 'test-user', templateId: 'test-campaign' })
+  const result = await sendCampaign(req.body.testEmail, req.body.subject, req.body.html, { userId: 'test-user', templateId: 'test-campaign', list: 'test-list' })
 
   res.status(200).json({ message: result })
 }

@@ -1,5 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { AdminDAO } from './models/admin'
 
 export interface CustomRequest extends NextApiRequest {
   dbClient: MongoClient;
@@ -21,9 +22,10 @@ const withMongoDB = (
   return async (req: NextApiRequest, res: NextApiResponse) => {
     let mongoClient
     try {
+      const database = databaseName || req.headers['x-mailing-list']?.toString()
       const client = new MongoClient(uri, options);
       mongoClient= await client.connect();
-      const db = client.db(databaseName || process.env.DB_NAME);
+      const db = client.db(database);
 
       // Augment the request object with the MongoDB client and database
       const customReq: CustomRequest = Object.assign(req, {
@@ -43,5 +45,24 @@ const withMongoDB = (
   };
 };
 
+export const listExists = async (req: NextApiRequest, res: NextApiResponse, listName: string) => {
+  let mongoClient
+  try {
+    const client = new MongoClient(uri, options);
+    mongoClient= await client.connect();
+    const db = client.db('settings');
+    const adminDAO = new AdminDAO(db)
+    const settings = await adminDAO.getSettings()
+
+    return settings && !!settings.newsletters.find(newsletter => newsletter.database === listName)
+  } catch (error) {
+    console.error('Error occurred:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    if (mongoClient) {
+      mongoClient.close()
+    }
+  }
+}
 
 export default withMongoDB;

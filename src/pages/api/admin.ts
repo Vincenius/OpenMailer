@@ -1,7 +1,7 @@
 import type { NextApiResponse } from 'next'
 import { getServerSession } from "next-auth/next"
 import withMongoDB, { CustomRequest } from '../../../lib/db'
-import { AdminDAO } from '../../../lib/models/admin'
+import { AdminDAO, Settings } from '../../../lib/models/admin'
 import withAuth from '../../../lib/auth';
 import { authOptions } from "../api/auth/[...nextauth]"
 
@@ -16,22 +16,16 @@ type Result = {
   message: string,
 } | {
   initialized: boolean,
-}
+} | Settings
 
 const updateSettings = async (req: CustomRequest, res: NextApiResponse<Result>) => {
   const adminDAO = new AdminDAO(req.db);
   const settings = await adminDAO.getSettings();
 
   if (!settings) {
-    await adminDAO.createSettings({
-      ...req.body,
-      initialized: false,
-    })
+    await adminDAO.createSettings(req.body)
   } else {
-    await adminDAO.updateSettings({ _id: settings._id }, {
-      ...req.body,
-      initialized: false,
-    })
+    await adminDAO.updateSettings({ _id: settings._id }, req.body)
   }
 
   res.status(200).json({ message: 'success' })
@@ -69,11 +63,12 @@ async function handler(
     const adminDAO = new AdminDAO(req.db);
     const settings = await adminDAO.getSettings();
     const session = await getServerSession(req, res, authOptions)
+    const initialized = (settings?.newsletters || []).length > 0
 
     if (session) {
-      res.status(200).json(settings || { initialized: false })
+      res.status(200).json({ ...settings, initialized } || { initialized })
     } else {
-      res.status(200).json({ initialized: !!(settings && settings.initialized) })
+      res.status(200).json({ initialized })
     }
   } else if (req.method === 'POST') {
     await withAuth(req, res, updateSettings)

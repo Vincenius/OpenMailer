@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import useSWR from 'swr'
 import { Table, ThemeIcon, Tooltip, Flex, Pagination } from '@mantine/core';
 import { IconCheck, IconX, IconDots } from '@tabler/icons-react';
 import NumberCard from '@/components/NumberCard';
+import { useFetch } from '@/utils/apiMiddleware'
 import Layout from './Layout'
-import fetcher from '../../utils/fetcher'
 import { Subscriber } from '../../../lib/models/subscriber';
 
 
 export default function Subscribers() {
   const [page, setPage] = useState(1)
-  const { data = {}, error, isLoading } = useSWR(`/api/subscribers?page=${page}`, fetcher)
+  const { data = {}, error, isLoading } = useFetch(`/api/subscribers?page=${page}`)
   const { total = 0, subscribers = [] } = data
 
   return (

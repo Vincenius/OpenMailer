@@ -2,6 +2,7 @@ import Layout from "../Layout";
 import { useState } from 'react';
 import { TextInput, Textarea, Flex, Box, Card, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useUpdate } from '@/utils/apiMiddleware'
 
 export default function NewCampaign() {
   const [subject, setSuject] = useState('');
@@ -9,22 +10,16 @@ export default function NewCampaign() {
   const [loading, setLoading] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const [opened, { open, close }] = useDisclosure(false);
+  const { triggerUpdate } = useUpdate()
 
   const sendCampaign = ({ test = false }) => {
     setLoading(true)
-    const uri = test ? '/api/testEmail' : '/api/campaigns';
-    fetch(uri, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        subject,
-        html,
-        testEmail,
-      })
-    })
-    .finally(() => setLoading(false))
+    const url = test ? '/api/testEmail' : '/api/campaigns';
+    triggerUpdate({ url, method: 'POST', body: {
+      subject,
+      html,
+      testEmail,
+    }}).finally(() => setLoading(false))
   }
 
   return (

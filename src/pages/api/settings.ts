@@ -8,10 +8,8 @@ type Result = {
 }
 
 const addDatabase = async (req: CustomRequest, res: NextApiResponse<Result>) => {
-  const { welcome_email, ...settings } = req.body;
   const settingsDAO = new SettingsDAO(req.db);
-
-  await settingsDAO.create(settings)
+  await settingsDAO.create(req.body)
 
   res.status(200).json({ message:'success' })
 }

@@ -1,12 +1,13 @@
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from "next-auth/react"
-import { useDisclosure } from '@mantine/hooks'
+import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay } from '@mantine/core'
 import fetcher from '../../utils/fetcher'
+
 
 type LayoutProps = {
   title: String,
@@ -18,20 +19,25 @@ export default function Layout(props: LayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const { asPath: path } = useRouter();
   const { data: session } = useSession();
-  const { data: { exists } = {}, isLoading } = useSWR('/api/admin', fetcher)
+  const [mailingList, setMailingList] = useLocalStorage({ key: 'selected-mailing-list' });
+  const { data: { initialized, newsletters } = {}, isLoading } = useSWR('/api/admin', fetcher)
   const router = useRouter()
 
   useEffect(() => {
     if (session !== undefined && !isLoading) {
-      if (!exists || session === null) {
-        const path = exists
+      if (!initialized || session === null) {
+        const path = initialized
           ? '/api/auth/signin'
           : '/setup'
 
         router.push(path)
+      } else {
+        if (!mailingList) {
+          setMailingList(newsletters[0].database)
+        }
       }
     }
-  }, [session, router, isLoading, exists])
+  }, [session, router, isLoading, initialized, newsletters, setMailingList, mailingList])
 
   return (
     <>
@@ -53,6 +59,7 @@ export default function Layout(props: LayoutProps) {
               <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
               <Title size="h3">OpenMailer | {props.title}</Title>
             </Flex>
+            {/* Select account */}
           </AppShell.Header>
 
           <AppShell.Navbar p="md">
@@ -62,7 +69,7 @@ export default function Layout(props: LayoutProps) {
             <NavLink label="Logout" onClick={() => signOut()} />
           </AppShell.Navbar>
 
-          <AppShell.Main>{props.children}</AppShell.Main>
+          { mailingList && <AppShell.Main>{props.children}</AppShell.Main> }
         </AppShell>
       </main>
     </>

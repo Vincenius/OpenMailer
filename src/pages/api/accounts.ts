@@ -8,6 +8,8 @@ type Result = {
   message: string,
 } | {
   exists: boolean,
+} | {
+  count: number,
 }
 
 const createAccount = async (req: CustomRequest, res: NextApiResponse<Result>) => {
@@ -38,6 +40,12 @@ async function handler(
       // first account can be created without auth
       await createAccount(req, res)
     }
+  } else if (req.method === 'GET') {
+    const adminDAO = new AdminDAO(req.db);
+    const accounts = await adminDAO.getAllByQuery({})
+    const count = accounts.length
+
+    res.status(200).json({ count })
   } else {
     res.status(405).json({ message: 'Method not allowed' })
   }

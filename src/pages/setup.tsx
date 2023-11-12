@@ -1,28 +1,41 @@
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { useSession } from "next-auth/react"
 import { signIn } from "next-auth/react"
+import { useRouter } from 'next/navigation'
 import Head from 'next/head'
-import { Card, Title, Flex, Button, TextInput, Stepper, Text } from '@mantine/core';
+import { Card, Title, Flex, Button, TextInput, Stepper, Text, LoadingOverlay } from '@mantine/core';
 import NewsetterSettings from '../components/NewsletterSettings';
+import fetcher from '../utils/fetcher'
 
 export default function Setup() {
+  const router = useRouter()
+  const { data: { base_url, newsletters, initialized } = {}, isLoading: adminLoading } = useSWR('/api/admin', fetcher)
+  const { data: { count } = {}, isLoading: accountsLoading } = useSWR('/api/accounts', fetcher)
   const { data: session } = useSession()
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formValues, setFormValues] = useState<any>({})
+  const isLoading = adminLoading || accountsLoading
 
   useEffect(() => {
-    // todo redirect if setup already done
-    if (session !== undefined) {
-      setActive(2) // todo -> 1
-      setFormValues({
-        base_url: window.location.origin,
-        cors_origin: '*',
-        newsletters: [],
-      })
+    if (!isLoading) {
+      if (initialized) {
+        router.push('/app')
+      } else if (!session && count > 0) {
+        router.push('/api/auth/signin')
+      } else if (!base_url) {
+        setActive(1)
+        setFormValues({
+          base_url: window.location.origin,
+          cors_origin: '*',
+          newsletters: [],
+        })
+      } else {
+        setActive(2)
+      }
     }
-    // todo redirect if not logged in but account exists?
-  }, [session])
+  }, [session, isLoading, base_url, initialized, router, count])
 
   const handleChange = (target: EventTarget): void => {
     const inputElement = target as HTMLInputElement;
@@ -59,6 +72,10 @@ export default function Setup() {
     })
   }
 
+  const onSuccess = () => {
+    router.push('/app?setup=done')
+  }
+
   return <>
     <Head>
       <title>OpenMailer</title>
@@ -68,6 +85,7 @@ export default function Setup() {
     </Head>
       <Flex justify="center">
         <Card shadow="sm" padding="lg" radius="md" withBorder m="xl" w={760}>
+          { isLoading && <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} /> }
 
           <Stepper active={active}>
             <Stepper.Step label="Account" description="Create an admin account" loading={loading && active === 0}>
@@ -130,7 +148,7 @@ export default function Setup() {
             <Stepper.Step label="Email" description="Create your mailing list" loading={loading && active === 2}>
               <Title size="h3" mb="md" order={2}>Create your mailing list</Title>
 
-              <NewsetterSettings loading={loading} setLoading={setLoading} />
+              <NewsetterSettings loading={loading} setLoading={setLoading} onSuccess={onSuccess} />
             </Stepper.Step>
           </Stepper>
         </Card>

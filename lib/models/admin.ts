@@ -15,7 +15,6 @@ export interface Newsletter {
 
 export interface Settings {
   _id?: ObjectId,
-  initialized: boolean,
   base_url: string,
   cors_origin: string,
   newsletters: Newsletter[],
