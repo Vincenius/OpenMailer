@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest) => {
   if (params.length === 3) {
     const userId = params[0];
     const campaignId = params[1];
-    const list = params[3];
+    const list = params[2];
 
     fetch(`${process.env.BASE_URL}/api/track`, {
       method: 'POST',

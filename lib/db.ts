@@ -1,6 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { AdminDAO } from './models/admin'
+import { SettingsDAO } from './models/settings';
 
 export interface CustomRequest extends NextApiRequest {
   dbClient: MongoClient;
@@ -58,6 +59,33 @@ export const listExists = async (req: NextApiRequest, res: NextApiResponse, list
   } catch (error) {
     console.error('Error occurred:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    if (mongoClient) {
+      mongoClient.close()
+    }
+  }
+}
+
+export const getSettings = async (listName: string) => {
+  let mongoClient
+  try {
+    const client = new MongoClient(uri, options);
+    mongoClient= await client.connect();
+    const db = client.db('settings');
+    const adminDAO = new AdminDAO(db)
+    const settings = await adminDAO.getSettings()
+
+    const newsletterDb = client.db(listName);
+    const settingsDAO = new SettingsDAO(newsletterDb)
+    const newsletterSettings = await settingsDAO.getAll({})
+
+    return {
+      ...settings,
+      ...newsletterSettings[0],
+    }
+  } catch (error) {
+    console.error('Error occurred:', error);
+    return null
   } finally {
     if (mongoClient) {
       mongoClient.close()

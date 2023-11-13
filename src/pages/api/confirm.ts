@@ -47,7 +47,7 @@ async function handler(
           message: 'Invalid confirmation link',
         })
       } else {
-        const validList = await listExists(req, res, req.body.list)
+        const validList = await listExists(req, res, req.query.list.toString())
         if (validList) {
           await withMongoDB(confirmSubscriber, req.query.list.toString())(req, res)
         } else {

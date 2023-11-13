@@ -25,7 +25,7 @@ async function handler(
   if (req.method === 'GET') {
     const list = (req.query.list || '').toString()
 
-    const validList = await listExists(req, res, req.body.list)
+    const validList = await listExists(req, res, list)
     if (validList) {
       await withMongoDB(handleUnsubscribe, list)(req, res)
     } else {

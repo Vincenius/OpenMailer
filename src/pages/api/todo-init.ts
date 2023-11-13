@@ -13,29 +13,29 @@ type Result = {
 }
 
 async function initDatabase(req: CustomRequest, res: NextApiResponse<Result>) {
-  try {
-    const campaignDao = new CampaignDAO(req.db);
-    const welcomeCampaign = await campaignDao.getByQuery({ id: welcomeCampaignId });
+  // try {
+  //   const campaignDao = new CampaignDAO(req.db);
+  //   const welcomeCampaign = await campaignDao.getByQuery({ id: welcomeCampaignId });
 
-    if (!welcomeCampaign) {
-      const mjml = welcomeTemplate({ userId: 'none' })
-      const htmlOutput = mjml2html(mjml)
-      const html = htmlOutput.html
+  //   if (!welcomeCampaign) {
+  //     const mjml = welcomeTemplate({ userId: 'none' })
+  //     const htmlOutput = mjml2html(mjml)
+  //     const html = htmlOutput.html
 
-      await campaignDao.create({
-        id: welcomeCampaignId,
-        createdAt: new Date(),
-        subject: welcomeSubject,
-        html,
-        users: []
-      })
-    }
+  //     await campaignDao.create({
+  //       id: welcomeCampaignId,
+  //       createdAt: new Date(),
+  //       subject: welcomeSubject,
+  //       html,
+  //       users: []
+  //     })
+  //   }
 
-    res.status(200).json({ message: 'success' })
-  } catch (e) {
-    console.error(e)
-    res.status(500).json({ message: 'Internal Server Error' })
-  }
+  //   res.status(200).json({ message: 'success' })
+  // } catch (e) {
+  //   console.error(e)
+  //   res.status(500).json({ message: 'Internal Server Error' })
+  // }
 }
 
 async function handler(

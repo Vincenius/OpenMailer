@@ -1,9 +1,10 @@
 export type TrackingProps = {
   userId: string;
   list: string;
+  base_url: string;
 };
 
-const getUnsubscribe = ({ userId = '', list = '' }: TrackingProps) => {
+const getUnsubscribe = ({ userId = '', list = '', base_url = '' }: TrackingProps) => {
   return `<div style="margin:0px auto;max-width:600px;">
   <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
     <tbody>
@@ -15,7 +16,7 @@ const getUnsubscribe = ({ userId = '', list = '' }: TrackingProps) => {
   <tbody>
         <tr>
           <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-<div style="font-family:helvetica;font-size:16px;line-height:1;text-align:center;color:#000000;"><a href="${process.env.BASE_URL}/api/unsubscribe?id=${userId}&list=${list}">Unsubscribe</a><span></span></div>
+<div style="font-family:helvetica;font-size:16px;line-height:1;text-align:center;color:#000000;"><a href="${base_url}/api/unsubscribe?id=${userId}&list=${list}">Unsubscribe</a><span></span></div>
           </td>
         </tr>
   </tbody>

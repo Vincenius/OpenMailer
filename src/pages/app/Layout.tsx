@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from "next-auth/react"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
-import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay } from '@mantine/core'
+import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay, Select } from '@mantine/core'
 import fetcher from '../../utils/fetcher'
+import { useUpdate } from '../../utils/apiMiddleware'
+import { Newsletter } from '../../../lib/models/admin'
 
 
 type LayoutProps = {
@@ -20,8 +22,10 @@ export default function Layout(props: LayoutProps) {
   const { asPath: path } = useRouter();
   const { data: session } = useSession();
   const [mailingList, setMailingList] = useLocalStorage({ key: 'selected-mailing-list' });
-  const { data: { initialized, newsletters } = {}, isLoading } = useSWR('/api/admin', fetcher)
+  const { data: { initialized, newsletters = [] } = {}, isLoading } = useSWR('/api/admin', fetcher)
   const router = useRouter()
+  const { triggerUpdate } = useUpdate()
+  const activeList = newsletters.find((n: Newsletter) => n.database === mailingList)
 
   useEffect(() => {
     if (session !== undefined && !isLoading) {
@@ -39,6 +43,13 @@ export default function Layout(props: LayoutProps) {
     }
   }, [session, router, isLoading, initialized, newsletters, setMailingList, mailingList])
 
+  useEffect(() => {
+    if (mailingList) {
+      console.log('CALLED')
+      // triggerUpdate({ url: '/api/admin', method: 'PUT', body: { database: mailingList }})
+    }
+  }, [mailingList, triggerUpdate])
+
   return (
     <>
       <Head>
@@ -55,11 +66,25 @@ export default function Layout(props: LayoutProps) {
           padding="md"
         >
           <AppShell.Header>
-            <Flex align="center" style={{ height: '100%' }} ml="lg">
-              <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-              <Title size="h3">OpenMailer | {props.title}</Title>
+            <Flex style={{ height: '100%' }} align="center" justify="space-between">
+              <Flex ml="lg">
+                <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+                <Title size="h3">OpenMailer | {props.title}</Title>
+              </Flex>
+
+              <Select
+                placeholder="Mailing List"
+                data={newsletters.map((n: Newsletter) => ({ value: n.database, label: n.name}))}
+                size="xs"
+                mr="lg"
+                value={activeList?.database}
+                onChange={val => {
+                  console.log(val)
+                  if (val) { setMailingList(val) }
+                }}
+                allowDeselect={false}
+              />
             </Flex>
-            {/* Select account */}
           </AppShell.Header>
 
           <AppShell.Navbar p="md">
