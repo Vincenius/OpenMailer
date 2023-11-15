@@ -10,7 +10,7 @@ import fetcher from '../utils/fetcher'
 
 export default function Setup() {
   const router = useRouter()
-  const { data: { base_url, newsletters, initialized } = {}, isLoading: adminLoading } = useSWR('/api/admin', fetcher)
+  const { data: { initialized } = {}, isLoading: adminLoading } = useSWR('/api/admin', fetcher)
   const { data: { count } = {}, isLoading: accountsLoading } = useSWR('/api/accounts', fetcher)
   const { data: session } = useSession()
   const [active, setActive] = useState(0);
@@ -24,18 +24,11 @@ export default function Setup() {
         router.push('/app')
       } else if (!session && count > 0) {
         router.push('/api/auth/signin')
-      } else if (!base_url) {
+      } else if (session) {
         setActive(1)
-        setFormValues({
-          base_url: window.location.origin,
-          cors_origin: '*',
-          newsletters: [],
-        })
-      } else {
-        setActive(2)
       }
     }
-  }, [session, isLoading, base_url, initialized, router, count])
+  }, [session, isLoading, initialized, router, count])
 
   const handleChange = (target: EventTarget): void => {
     const inputElement = target as HTMLInputElement;
@@ -114,39 +107,8 @@ export default function Setup() {
                 </Flex>
               </form>
             </Stepper.Step>
-            <Stepper.Step label="Settings" description="Set up OpenMailer" loading={loading && active === 1}>
-              <form onSubmit={handleSubmit}>
-                <Title size="h3"  order={2}>Set-up OpenMailer</Title>
-                <Text mb="md" fs="italic">Global settings that apply to all mailing lists created with OpenMailer.</Text>
-
-                <TextInput
-                  label="Base URL"
-                  placeholder="Base URL"
-                  description="The domain where OpenMailer is hosted. It is used to generate email links (eg. the unsubscribe link)."
-                  mb="md"
-                  name="base_url"
-                  onChange={(event) => handleChange(event.currentTarget)}
-                  value={formValues?.base_url || ''}
-                  required
-                />
-                <TextInput
-                  label="CORS Origin"
-                  placeholder="CORS Origin"
-                  description="Domains from where you want to allow users to sign up for your newsletters. Keep * for allowing sign ups from everywhere."
-                  mb="md"
-                  name="cors_origin"
-                  onChange={(event) => handleChange(event.currentTarget)}
-                  value={formValues?.cors_origin || ''}
-                  required
-                />
-
-                <Flex justify="flex-end">
-                  <Button type="submit" loading={loading}>Continue</Button>
-                </Flex>
-              </form>
-            </Stepper.Step>
-            <Stepper.Step label="Email" description="Create your mailing list" loading={loading && active === 2}>
-              <Title size="h3" mb="md" order={2}>Create your mailing list</Title>
+            <Stepper.Step label="Email" description="Create your mailing list" loading={loading && active === 1}>
+              <Title size="h3" mb="md" order={1}>Create your mailing list</Title>
 
               <NewsetterSettings loading={loading} setLoading={setLoading} onSuccess={onSuccess} />
             </Stepper.Step>

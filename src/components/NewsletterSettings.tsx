@@ -11,8 +11,7 @@ type Props = {
 
 const NewsetterSettings = (props: Props) => {
   const { loading, setLoading } = props
-  const [formValues, setFormValues] = useState<any>({})
-  const [type, setType] = useState('ses')
+  const [formValues, setFormValues] = useState<any>({ sending_type: 'ses' })
   const { triggerUpdate } = useUpdate()
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
@@ -87,12 +86,12 @@ const NewsetterSettings = (props: Props) => {
         { label: 'SES', value: 'ses' },
         { label: 'E-Mail', value: 'email' }
       ]}
-      value={type}
-      onChange={setType}
+      value={formValues.sending_type}
+      onChange={val => setFormValues({...formValues, sending_type: val })}
       mb="md"
     />
 
-    { type === 'ses' && <>
+    { formValues.sending_type === 'ses' && <>
       <TextInput
         label="SES Access Key ID"
         placeholder="SES Access Key ID"
@@ -120,7 +119,7 @@ const NewsetterSettings = (props: Props) => {
       />
     </> }
 
-    { type === 'email' && <>
+    { formValues.sending_type === 'email' && <>
       <TextInput
         label="Email Password"
         placeholder="Password of the email used above"

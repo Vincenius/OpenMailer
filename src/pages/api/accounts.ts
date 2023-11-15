@@ -2,7 +2,7 @@ import type { NextApiResponse } from 'next'
 import { createHash } from 'crypto'
 import withAuth from '../../../lib/auth';
 import withMongoDB, { CustomRequest } from '../../../lib/db'
-import { Account, AdminDAO } from '../../../lib/models/admin'
+import { AdminDAO } from '../../../lib/models/admin'
 
 type Result = {
   message: string,

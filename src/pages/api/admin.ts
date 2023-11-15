@@ -36,21 +36,31 @@ const addNewsletter = async (req: CustomRequest, res: NextApiResponse<Result>) =
   const settings = await adminDAO.getSettings();
 
   let dbName = getDBName(req.body.name);
-  let i = 1
-  while (settings.newsletters.find((n) => n.database === dbName)) {
-    i++;
-    dbName = `${getDBName(req.body.name)}-${i}`
-  }
 
-  await adminDAO.updateSettings({ _id: settings._id }, {
-    newsletters: [
-      ...settings.newsletters,
-      {
+  if (settings) { // newsletters exist already
+    let i = 1
+    while (settings.newsletters.find((n) => n.database === dbName)) {
+      i++;
+      dbName = `${getDBName(req.body.name)}-${i}`
+    }
+
+    await adminDAO.updateSettings({ _id: settings._id }, {
+      newsletters: [
+        ...settings.newsletters,
+        {
+          name: req.body.name,
+          database: dbName,
+        }
+      ],
+    })
+  } else { // first newsletter
+    await adminDAO.createSettings({
+      newsletters: [{
         name: req.body.name,
         database: dbName,
-      }
-    ],
-  })
+      }]
+    })
+  }
 
   res.status(200).json({ message: dbName })
 }

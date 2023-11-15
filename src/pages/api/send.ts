@@ -33,7 +33,7 @@ async function handleCampaignSend(req: CustomRequest, res: NextApiResponse<Resul
   await Promise.all(promises)
 
   if (allPendingUsers.length > 0) { // call recursively if pending users left
-    fetch(`${process.env.BASE_URL}/api/send`, {
+    fetch('/api/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

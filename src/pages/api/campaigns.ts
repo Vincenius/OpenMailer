@@ -42,7 +42,7 @@ async function sendCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
     }))
   })
 
-  fetch(`${process.env.BASE_URL}/api/send`, {
+  fetch('/api/send', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

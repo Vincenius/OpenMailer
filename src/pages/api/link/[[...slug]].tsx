@@ -5,7 +5,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { slug = [] } = req.query
 
-  if (slug.length === 4) {
+  if (slug.length === 3) {
     const userId = atob(slug[0]);
     const campaignId = atob(slug[1]);
     const link = atob(slug[2]);

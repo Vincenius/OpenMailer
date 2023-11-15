@@ -1,4 +1,5 @@
-import { Flex, Title } from '@mantine/core'
+import { Flex, Title, Card, Text, Button } from '@mantine/core'
+import Link from 'next/link'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 // import styles from '@/styles/Home.module.css'
 import NumberCard from '@/components/NumberCard';
@@ -35,8 +36,27 @@ export default function Home() {
   const lastOpened = getRate(getOpens(data.campaign) || 0, lastReceived)
   const lastClicked = getRate(getUniqueClicks(data.campaign) || 0, lastReceived)
 
+  if (data.subscriberCount === 0 && !isLoading) {
+    return (<Layout title="Dashboard" isLoading={isLoading}>
+      <Title size="h1" mb="md">Welcome to OpenMailer</Title>
+
+      <Button
+        component={Link}
+        href="/app/campaigns/new"
+        size="md" mb="lg"
+      >
+        Import Subscribers
+      </Button>
+      <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
+        <Text>todo form</Text>
+        {/* https://mantine.dev/others/code-highlight/ */}
+      </Card>
+    </Layout>)
+  }
+
   return (
     <Layout title="Dashboard" isLoading={isLoading}>
+      <Title size="h1" mb="md">Welcome back!</Title>
       <Flex mb="xl">
         <NumberCard title="Subscribers" count={data.subscriberCount} />
         <NumberCard title="Recent Open Rate" count={lastOpened || 0} symbol="%" />

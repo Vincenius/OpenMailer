@@ -45,13 +45,13 @@ const getTransporter = (settings: any) => {
 }
 
 
-const mapLinks = (mjml: string, userId: string, campaignId: string, list: string, base_url: string) => {
+const mapLinks = (mjml: string, userId: string, campaignId: string, list: string) => {
   let updatedMjml = mjml;
   const regex = /href="([^"]+)"/g;
   let match;
 
   while ((match = regex.exec(mjml)) !== null) {
-    const mappedLink = `href="${base_url}/api/link/${btoa(userId)}/${btoa(campaignId)}/${btoa(match[1])}/${btoa(list)}"`
+    const mappedLink = `href="${process.env.BASE_URL}/api/link/${btoa(userId)}/${btoa(campaignId)}/${btoa(match[1])}/${btoa(list)}"`
     updatedMjml = updatedMjml.replace(match[0], mappedLink);
   }
 
@@ -61,7 +61,7 @@ const mapLinks = (mjml: string, userId: string, campaignId: string, list: string
 export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => {
   const settings = await getSettings(props.list)
   const subject = `${settings?.name} | Confirm your email address`
-  const mjml = confirmationTemplate({ ...props, base_url: settings?.base_url || '' })
+  const mjml = confirmationTemplate(props)
   const htmlOutput = mjml2html(mjml)
   const html = htmlOutput.html
 
@@ -70,9 +70,8 @@ export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => 
 
 export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
   const settings = await getSettings(props.list)
-  const base_url = settings?.base_url || ''
-  const mjml = welcomeTemplate({ ...props, base_url })
-  const injectedLinksMjml = mapLinks(mjml, props.userId, welcomeCampaignId, props.list, base_url)
+  const mjml = welcomeTemplate(props)
+  const injectedLinksMjml = mapLinks(mjml, props.userId, welcomeCampaignId, props.list)
   const htmlOutput = mjml2html(injectedLinksMjml)
   const html = htmlOutput.html
 
@@ -81,10 +80,9 @@ export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
 
 export const sendCampaign = async (to: string, subject: string, html: string, props: TemplateProps) => {
   const settings = await getSettings(props.list)
-  const base_url = settings?.base_url || ''
-  const injectedLinksHtml = mapLinks(html, props.userId, props.templateId, props.list, base_url)
-  const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId, list: props.list, base_url })
-  const unsubscribeLink = getUnsubscribe({ userId: props.userId, list: props.list, base_url })
+  const injectedLinksHtml = mapLinks(html, props.userId, props.templateId, props.list)
+  const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId, list: props.list })
+  const unsubscribeLink = getUnsubscribe({ userId: props.userId, list: props.list })
   const finalHtml = injectedLinksHtml.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`)
 
   return sendEmail(to, subject, finalHtml, settings)

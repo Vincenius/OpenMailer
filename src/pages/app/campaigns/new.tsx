@@ -19,7 +19,10 @@ export default function NewCampaign() {
       subject,
       html,
       testEmail,
-    }}).finally(() => setLoading(false))
+    }}).finally(() => {
+      setLoading(false)
+      close()
+    })
   }
 
   return (
