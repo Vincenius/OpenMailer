@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useFetch, useUpdate } from '@/utils/apiMiddleware'
+import { useFetch } from '@/utils/apiMiddleware'
 import NewsetterSettings from '@/components/NewsletterSettings';
 import { notifications } from '@mantine/notifications';
 import Layout from './Layout'

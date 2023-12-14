@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { Text, TextInput, Flex, Button, SegmentedControl, Popover } from '@mantine/core'
+import useSWR from 'swr'
+import { useDisclosure, useLocalStorage } from '@mantine/hooks'
+import { Text, TextInput, Flex, Button, SegmentedControl, Popover, Modal } from '@mantine/core'
 import { useUpdate } from '../utils/apiMiddleware'
+import fetcher from '../utils/fetcher'
 import { Settings } from '../../lib/models/settings'
 
 type Props = {
@@ -18,7 +21,9 @@ const NewsetterSettings = (props: Props) => {
     ? { sending_type: 'ses' }
     : props.defaultValues)
   const { triggerUpdate } = useUpdate()
-
+  const [opened, { open, close }] = useDisclosure(false);
+  const { data: { newsletters = [] } = {}, mutate } = useSWR('/api/admin', fetcher)
+  const [mailingList, setMailingList] = useLocalStorage({ key: 'selected-mailing-list' });
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -37,6 +42,18 @@ const NewsetterSettings = (props: Props) => {
     if (props.onSuccess) {
       props.onSuccess(database)
     }
+    setLoading(false)
+  }
+
+  const handleDelete = async () => {
+    setLoading(true)
+
+    await triggerUpdate({ url: '/api/settings', method: 'DELETE', body: formValues })
+    const newSelected = newsletters.filter((n: any) => n.database !== formValues.database)[0]
+    mutate()
+    setMailingList(newSelected?.database)
+    close()
+
     setLoading(false)
   }
 
@@ -155,9 +172,18 @@ const NewsetterSettings = (props: Props) => {
     {/* todo test connection */}
 
     <Flex justify="flex-end">
-      {/* TODO caption */}
+      { props.isUpdate && <Button color="red" variant="outline" mr="md" onClick={open}>Delete</Button>}
       <Button type="submit" loading={loading}>{props.buttonCaption || 'Continue'}</Button>
     </Flex>
+
+    <Modal opened={opened} title="Are you sure?" size="sm" onClose={close}>
+      Deleting the mailing list will remove all subscribers and campaings. This can not be reversed.
+
+      <Flex justify="flex-end" mt="md">
+        <Button loading={loading} variant="outline" mr="md" onClick={close}>Cancel</Button>
+        <Button loading={loading} color="red" onClick={handleDelete}>Delete</Button>
+      </Flex>
+    </Modal>
   </form>
 }
 

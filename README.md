@@ -16,7 +16,7 @@ A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
 ## Setup
 
-1. Create a MongoDB database
+1. Create a MongoDB database. Your database user should have Admin permissions.
 
 2. Install dependencies with `npm i` or `yarn`
 

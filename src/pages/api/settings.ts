@@ -39,7 +39,21 @@ const updateAdmin = async (req: CustomRequest, res: NextApiResponse<Settings | n
   await adminDAO.updateSettings({ _id: settings._id }, { newsletters: updatedNewsletters });
 }
 
-// rename settings
+const deleteNewsletter = async (req: CustomRequest, res: NextApiResponse<Settings | null>) => {
+  const adminDAO = new AdminDAO(req.db);
+  const settings = await adminDAO.getSettings();
+  const updatedNewsletters = settings.newsletters.filter((n) => n.database !== req.body.database);
+
+  await adminDAO.updateSettings({ _id: settings._id }, { newsletters: updatedNewsletters });
+}
+
+const deleteDatabases = async (req: CustomRequest, res: NextApiResponse<Result>) => {
+  await req.db.dropDatabase()
+
+  res.status(200).json({ message:'success' })
+}
+
+// todo check auth
 async function handler(
   req: CustomRequest,
   res: NextApiResponse<Result | Settings[]>
@@ -53,6 +67,9 @@ async function handler(
   } else if (req.method === 'PUT') {
     await withMongoDB(updateAdmin, 'settings')(req, res);
     await withMongoDB(updateSettings)(req, res)
+  } else if (req.method === 'DELETE') {
+    await withMongoDB(deleteNewsletter, 'settings')(req, res);
+    await withMongoDB(deleteDatabases)(req, res)
   } else {
     res.status(405).json({ message: 'Method not allowed' })
   }
