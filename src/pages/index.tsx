@@ -14,8 +14,8 @@ export default function Home() {
     if (session !== undefined && !isLoading) {
       const path = initialized
         ? session !== null
-          ? '/api/auth/signin'
-          : '/app'
+          ? '/app'
+          : '/api/auth/signin'
         : '/setup'
 
       router.push(path)

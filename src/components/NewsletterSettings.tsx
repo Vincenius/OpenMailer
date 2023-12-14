@@ -1,37 +1,41 @@
 import React, { useState } from 'react'
 import { Text, TextInput, Flex, Button, SegmentedControl, Popover } from '@mantine/core'
 import { useUpdate } from '../utils/apiMiddleware'
+import { Settings } from '../../lib/models/settings'
 
 type Props = {
   loading: boolean,
   setLoading: (loading: boolean) => void,
   onSuccess?: () => void,
-  database?: string,
+  isUpdate?: boolean,
+  defaultValues: Settings,
+  buttonCaption?: string,
 }
 
 const NewsetterSettings = (props: Props) => {
   const { loading, setLoading } = props
-  const [formValues, setFormValues] = useState<any>({ sending_type: 'ses' })
+  const [formValues, setFormValues] = useState<any>(!props.isUpdate
+    ? { sending_type: 'ses' }
+    : props.defaultValues)
   const { triggerUpdate } = useUpdate()
+
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true)
 
-    let database = props.database
-    if (!database) {
-      const { message } = await triggerUpdate({ url: '/api/admin', method: 'PUT', body: { name: formValues.name }})
-      database = message
+    if (props.isUpdate) {
+      await triggerUpdate({ url: '/api/settings', method: 'PUT', body: formValues })
+    } else {
+      const { message: database } = await triggerUpdate({ url: '/api/admin', method: 'PUT', body: { name: formValues.name }})
+
+      await triggerUpdate({ url: '/api/settings', method: 'POST', body: { ...formValues, database } })
     }
 
-    triggerUpdate({ url: '/api/settings', method: 'POST', body: { ...formValues, database } })
-      .then(() => {
-        if (props.onSuccess) {
-          props.onSuccess()
-        }
-      }).finally(() => {
-        setLoading(false)
-      })
+    if (props.onSuccess) {
+      props.onSuccess()
+    }
+    setLoading(false)
   }
 
   const handleChange = (target: EventTarget): void => {
@@ -50,6 +54,7 @@ const NewsetterSettings = (props: Props) => {
       name="name"
       onChange={(event) => handleChange(event.currentTarget)}
       required
+      defaultValue={props.defaultValues?.name}
     />
 
     <TextInput
@@ -61,6 +66,7 @@ const NewsetterSettings = (props: Props) => {
       type="email"
       onChange={(event) => handleChange(event.currentTarget)}
       required
+      defaultValue={props.defaultValues?.email}
     />
 
     <Text size="sm" fw={500}>Sending Type</Text>
@@ -99,6 +105,7 @@ const NewsetterSettings = (props: Props) => {
         name="ses_key"
         onChange={(event) => handleChange(event.currentTarget)}
         required
+        defaultValue={props.defaultValues?.ses_key}
       />
       <TextInput
         label="SES Secret Access Key"
@@ -108,6 +115,7 @@ const NewsetterSettings = (props: Props) => {
         type="password"
         onChange={(event) => handleChange(event.currentTarget)}
         required
+        defaultValue={props.defaultValues?.ses_secret}
       />
       <TextInput
         label="SES Region"
@@ -116,6 +124,7 @@ const NewsetterSettings = (props: Props) => {
         name="ses_region"
         onChange={(event) => handleChange(event.currentTarget)}
         required
+        defaultValue={props.defaultValues?.ses_region}
       />
     </> }
 
@@ -128,6 +137,7 @@ const NewsetterSettings = (props: Props) => {
         type="password"
         onChange={(event) => handleChange(event.currentTarget)}
         required
+        defaultValue={props.defaultValues?.email_pass}
       />
       <TextInput
         label="Email Host"
@@ -136,13 +146,15 @@ const NewsetterSettings = (props: Props) => {
         name="email_host"
         onChange={(event) => handleChange(event.currentTarget)}
         required
+        defaultValue={props.defaultValues?.email_host}
       />
     </> }
 
     {/* todo test connection */}
 
     <Flex justify="flex-end">
-      <Button type="submit" loading={loading}>Continue</Button>
+      {/* TODO caption */}
+      <Button type="submit" loading={loading}>{props.buttonCaption || 'Continue'}</Button>
     </Flex>
   </form>
 }

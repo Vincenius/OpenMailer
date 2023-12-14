@@ -5,7 +5,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { slug = [] } = req.query
 
-  if (slug.length === 3) {
+  if (slug.length === 4) {
     const userId = atob(slug[0]);
     const campaignId = atob(slug[1]);
     const link = atob(slug[2]);
@@ -27,6 +27,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }),
     })
 
+    res.redirect(301, link)
+  } else if (slug.length === 3) { // legacy emails
+    const link = atob(slug[2]);
     res.redirect(301, link)
   }
 

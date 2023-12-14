@@ -1,8 +1,8 @@
-import { Flex, Title, Card, Text, Button } from '@mantine/core'
-import Link from 'next/link'
+import { Flex, Title, Text } from '@mantine/core'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 // import styles from '@/styles/Home.module.css'
 import NumberCard from '@/components/NumberCard';
+import NewSubscribers from '@/components/NewSubscribers';
 import Layout from './Layout'
 import { getOpens, getUniqueClicks, getRate } from '../../utils/campaign';
 import { useFetch } from '../../utils/apiMiddleware'
@@ -36,21 +36,18 @@ export default function Home() {
   const lastOpened = getRate(getOpens(data.campaign) || 0, lastReceived)
   const lastClicked = getRate(getUniqueClicks(data.campaign) || 0, lastReceived)
 
-  if (data.subscriberCount === 0 && !isLoading) {
-    return (<Layout title="Dashboard" isLoading={isLoading}>
-      <Title size="h1" mb="md">Welcome to OpenMailer</Title>
+  if (isLoading) {
+    return (<Layout title="Dashboard" isLoading={true}>
+    </Layout>)
+  }
 
-      <Button
-        component={Link}
-        href="/app/campaigns/new"
-        size="md" mb="lg"
-      >
-        Import Subscribers
-      </Button>
-      <Card shadow="sm" padding="lg" radius="md" withBorder mr="md">
-        <Text>todo form</Text>
-        {/* https://mantine.dev/others/code-highlight/ */}
-      </Card>
+  if (data.subscriberCount === 0) {
+    return (<Layout title="Dashboard" isLoading={false}>
+      <Title size="h1" mb="sm">Welcome to OpenMailer</Title>
+      <Text mb="lg">Get started by adding your first subscribers.</Text>
+
+      {/* todo import */}
+      <NewSubscribers />
     </Layout>)
   }
 

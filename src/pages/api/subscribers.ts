@@ -34,12 +34,29 @@ async function getSubscribers(req: CustomRequest, res: NextApiResponse<Response 
   }
 }
 
+async function deleteSubscriber(req: CustomRequest, res: NextApiResponse<Response | Error>) {
+  try {
+    const { email } = req.body;
+    const subscriberDAO = new SubscriberDAO(req.db);
+    await subscriberDAO.deleteByQuery({ email });
+
+    res.status(200).json({
+      message: 'success'
+    })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: 'Internal Server Error' })
+  }
+}
+
 async function handler(
   req: CustomRequest,
   res: NextApiResponse<Subscriber[] | Error>
 ) {
   if (req.method === 'GET') {
     await withAuth(req, res, getSubscribers)
+  } else if (req.method === 'DELETE') {
+    await withAuth(req, res, deleteSubscriber)
   } else {
     res.status(405).json({ message: 'Method not allowed' })
   }

@@ -1,6 +1,5 @@
 import { ImageResponse } from '@vercel/og'
 import type { NextApiRequest } from 'next'
-import withMongoDB, { CustomRequest } from '../../../../lib/db';
 
 export const config = {
   runtime: 'edge',

@@ -51,6 +51,11 @@ export class SubscriberDAO {
     return result;
   }
 
+  async deleteByQuery (query: Object): Promise<WithId<Subscriber> | null> {
+    const result = await this.collection.findOneAndDelete(query)
+    return result;
+  }
+
   async increaseTrack(query: Object, field: string): Promise<WithId<Subscriber> | null> {
     const result = await this.collection.findOneAndUpdate(
       query,

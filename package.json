@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/code-highlight": "^7.2.2",
     "@mantine/core": "^7.2.1",
     "@mantine/dates": "^7.2.1",
+    "@mantine/dropzone": "^7.2.2",
     "@mantine/hooks": "^7.2.1",
     "@mantine/notifications": "^7.2.1",
     "@tabler/icons-react": "^2.39.0",
@@ -24,6 +26,7 @@
     "next-auth": "^4.23.2",
     "nextjs-cors": "^2.1.2",
     "nodemailer": "^6.9.6",
+    "papaparse": "^5.4.1",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.9.0",
@@ -34,6 +37,7 @@
     "@types/mjml": "^4.7.2",
     "@types/node": "^20.8.5",
     "@types/nodemailer": "^6.4.13",
+    "@types/papaparse": "^5.3.11",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.5",

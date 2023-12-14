@@ -43,12 +43,12 @@ export default function Layout(props: LayoutProps) {
     }
   }, [session, router, isLoading, initialized, newsletters, setMailingList, mailingList])
 
-  useEffect(() => {
-    if (mailingList) {
-      console.log('CALLED')
-      // triggerUpdate({ url: '/api/admin', method: 'PUT', body: { database: mailingList }})
-    }
-  }, [mailingList, triggerUpdate])
+  // useEffect(() => {
+  //   if (mailingList) {
+  //     // ???
+  //     // triggerUpdate({ url: '/api/admin', method: 'PUT', body: { database: mailingList }})
+  //   }
+  // }, [mailingList, triggerUpdate])
 
   return (
     <>
@@ -79,7 +79,6 @@ export default function Layout(props: LayoutProps) {
                 mr="lg"
                 value={activeList?.database}
                 onChange={val => {
-                  console.log(val)
                   if (val) { setMailingList(val) }
                 }}
                 allowDeselect={false}
@@ -91,6 +90,7 @@ export default function Layout(props: LayoutProps) {
             <NavLink label="Dashboard" href="/app" active={path === '/app'} component={Link}/>
             <NavLink label="Campaigns" href="/app/campaigns" active={path === '/app/campaigns'} component={Link}/>
             <NavLink label="Subscribers" href="/app/subscribers" active={path === '/app/subscribers'} component={Link}/>
+            <NavLink label="Settings" href="/app/settings" active={path === '/app/settings'} component={Link}/>
             <NavLink label="Logout" onClick={() => signOut()} />
           </AppShell.Navbar>
 

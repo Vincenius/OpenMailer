@@ -15,7 +15,7 @@ type Response = {
   total: number,
 }
 
-async function createSubscriber(req: CustomRequest, res: NextApiResponse<Subscriber[] | Error>) {
+async function createSubscriber(req: CustomRequest, res: NextApiResponse<string | Error>) {
   try {
     const subscriberDAO = new SubscriberDAO(req.db);
     const existingSubscriber = await subscriberDAO.getByQuery({ email: req.body.email })
@@ -36,7 +36,7 @@ async function createSubscriber(req: CustomRequest, res: NextApiResponse<Subscri
       await sendConfirmationEmail(req.body.email, { confirmationId, list: req.body.list })
     }
 
-    res.status(200).json({ message: 'success' })
+    res.status(200).send('Successfully subscribed!')
   } catch (e) {
     console.error(e)
     res.status(500).json({ message: 'Internal Server Error' })

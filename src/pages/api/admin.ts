@@ -12,11 +12,15 @@ const getDBName = (inputString: string) => {
   return modifiedString;
 }
 
+interface SettingsWithUrl extends Settings {
+  base_url: string,
+}
+
 type Result = {
   message: string,
 } | {
   initialized: boolean,
-} | Settings
+} | SettingsWithUrl
 
 const updateSettings = async (req: CustomRequest, res: NextApiResponse<Result>) => {
   const adminDAO = new AdminDAO(req.db);
@@ -76,7 +80,11 @@ async function handler(
     const initialized = (settings?.newsletters || []).length > 0
 
     if (session) {
-      res.status(200).json({ ...settings, initialized } || { initialized })
+      res.status(200).json({
+        ...(settings || {}),
+        initialized,
+        base_url: process.env.BASE_URL,
+      })
     } else {
       res.status(200).json({ initialized })
     }
