@@ -46,7 +46,7 @@ export default function Home() {
       <Title size="h1" mb="sm">Welcome to OpenMailer</Title>
       <Text mb="lg">Get started by adding your first subscribers.</Text>
 
-      {/* todo import */}
+      {/* todo import ? */}
       <NewSubscribers />
     </Layout>)
   }

@@ -5,11 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from "next-auth/react"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
-import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay, Select } from '@mantine/core'
+import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay, Select, Modal } from '@mantine/core'
+import NewsetterSettings from '@/components/NewsletterSettings'
 import fetcher from '../../utils/fetcher'
-import { useUpdate } from '../../utils/apiMiddleware'
 import { Newsletter } from '../../../lib/models/admin'
-
 
 type LayoutProps = {
   title: String,
@@ -18,14 +17,25 @@ type LayoutProps = {
 }
 
 export default function Layout(props: LayoutProps) {
+  const [loading, setLoading] = useState(false)
   const [opened, { toggle }] = useDisclosure();
+  const [modalOpened, { open, close }] = useDisclosure(false);
   const { asPath: path } = useRouter();
   const { data: session } = useSession();
   const [mailingList, setMailingList] = useLocalStorage({ key: 'selected-mailing-list' });
-  const { data: { initialized, newsletters = [] } = {}, isLoading } = useSWR('/api/admin', fetcher)
+
+  const { data: { initialized, newsletters = [] } = {}, isLoading, mutate } = useSWR('/api/admin', fetcher)
   const router = useRouter()
-  const { triggerUpdate } = useUpdate()
   const activeList = newsletters.find((n: Newsletter) => n.database === mailingList)
+
+  const onCreateSuccess = (database: string | undefined) => {
+    if (database) {
+      mutate()
+      setMailingList(database)
+      router.push('/app')
+      close()
+    }
+  }
 
   useEffect(() => {
     if (session !== undefined && !isLoading) {
@@ -36,19 +46,15 @@ export default function Layout(props: LayoutProps) {
 
         router.push(path)
       } else {
-        if (!mailingList) {
+        // mantine local storage hook returns undefined initially on re-render
+        // prevent resetting the value by checking if it exists via native localstorage
+        const item = localStorage.getItem('selected-mailing-list')
+        if (!item) {
           setMailingList(newsletters[0].database)
         }
       }
     }
   }, [session, router, isLoading, initialized, newsletters, setMailingList, mailingList])
-
-  // useEffect(() => {
-  //   if (mailingList) {
-  //     // ???
-  //     // triggerUpdate({ url: '/api/admin', method: 'PUT', body: { database: mailingList }})
-  //   }
-  // }, [mailingList, triggerUpdate])
 
   return (
     <>
@@ -74,12 +80,19 @@ export default function Layout(props: LayoutProps) {
 
               <Select
                 placeholder="Mailing List"
-                data={newsletters.map((n: Newsletter) => ({ value: n.database, label: n.name}))}
+                data={[
+                  ...newsletters.map((n: Newsletter) => ({ value: n.database, label: n.name})),
+                  { value: '_new', label: 'Create new'}
+                ]}
                 size="xs"
                 mr="lg"
                 value={activeList?.database}
                 onChange={val => {
-                  if (val) { setMailingList(val) }
+                  if (val === '_new') {
+                    open()
+                  } else if (val) {
+                    setMailingList(val)
+                  }
                 }}
                 allowDeselect={false}
               />
@@ -95,6 +108,14 @@ export default function Layout(props: LayoutProps) {
           </AppShell.Navbar>
 
           { mailingList && <AppShell.Main>{props.children}</AppShell.Main> }
+
+          <Modal opened={modalOpened} onClose={close} title="Create new mailing list" size="xl">
+            <NewsetterSettings
+              loading={loading}
+              setLoading={setLoading}
+              onSuccess={onCreateSuccess}
+              buttonCaption="Create"/>
+          </Modal>
         </AppShell>
       </main>
     </>

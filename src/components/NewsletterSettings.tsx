@@ -6,9 +6,9 @@ import { Settings } from '../../lib/models/settings'
 type Props = {
   loading: boolean,
   setLoading: (loading: boolean) => void,
-  onSuccess?: () => void,
+  onSuccess?: (database?: string) => void,
   isUpdate?: boolean,
-  defaultValues: Settings,
+  defaultValues?: Settings,
   buttonCaption?: string,
 }
 
@@ -23,17 +23,19 @@ const NewsetterSettings = (props: Props) => {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true)
+    let database
 
     if (props.isUpdate) {
       await triggerUpdate({ url: '/api/settings', method: 'PUT', body: formValues })
     } else {
-      const { message: database } = await triggerUpdate({ url: '/api/admin', method: 'PUT', body: { name: formValues.name }})
+      const { message } = await triggerUpdate({ url: '/api/admin', method: 'PUT', body: { name: formValues.name }})
+      database = message
 
       await triggerUpdate({ url: '/api/settings', method: 'POST', body: { ...formValues, database } })
     }
 
     if (props.onSuccess) {
-      props.onSuccess()
+      props.onSuccess(database)
     }
     setLoading(false)
   }
