@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next'
 import { v4 as uuidv4 } from 'uuid';
 import withMongoDB, { CustomRequest } from '../../../lib/db';
 import { SubscriberDAO, Subscriber } from '../../../lib/models/subscriber'
+import withAuth from '../../../lib/auth';
 
 type Result = {
   message: string,
@@ -53,7 +54,7 @@ async function handler(
   res: NextApiResponse<Subscriber[] | Result>
 ) {
   if (req.method === 'POST') {
-    await createSubscriber(req, res)
+    await withAuth(req, res, createSubscriber)
   } else if (req.method === 'GET') {
     res.status(200).json(globalState)
   } else {

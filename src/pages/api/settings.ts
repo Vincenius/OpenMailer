@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import withMongoDB, { CustomRequest } from '../../../lib/db'
 import { Settings, SettingsDAO } from '../../../lib/models/settings'
 import { AdminDAO } from '../../../lib/models/admin'
+import withAuth from '../../../lib/auth';
 
 type Result = {
   message: string,
@@ -53,11 +54,7 @@ const deleteDatabases = async (req: CustomRequest, res: NextApiResponse<Result>)
   res.status(200).json({ message:'success' })
 }
 
-// todo check auth
-async function handler(
-  req: CustomRequest,
-  res: NextApiResponse<Result | Settings[]>
-) {
+async function handleSettings(req: CustomRequest, res: NextApiResponse<Result | Settings[]>) {
   if (req.method === 'GET') {
     await withMongoDB(getSettings)(req, res)
   } else if (req.method === 'POST') {
@@ -73,6 +70,14 @@ async function handler(
   } else {
     res.status(405).json({ message: 'Method not allowed' })
   }
+}
+
+// todo check auth
+async function handler(
+  req: CustomRequest,
+  res: NextApiResponse<Result | Settings[]>
+) {
+  await withAuth(req, res, handleSettings)
 }
 
 export default handler;
