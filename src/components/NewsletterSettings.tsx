@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import useSWR from 'swr'
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications';
 import { Text, TextInput, Flex, Button, SegmentedControl, Popover, Modal } from '@mantine/core'
 import { useUpdate } from '../utils/apiMiddleware'
 import fetcher from '../utils/fetcher'
@@ -53,6 +54,11 @@ const NewsetterSettings = (props: Props) => {
     mutate()
     setMailingList(newSelected?.database)
     close()
+    notifications.show({
+      color: 'green',
+      title: 'Success',
+      message: `Successfully deleted the list!`,
+    });
 
     setLoading(false)
   }

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import withMongoDB, { CustomRequest } from '../../../lib/db';
 import withAuth from '../../../lib/auth';
 import { CampaignDAO, Campaign } from '../../../lib/models/campaigns'
-import { SubscriberDAO, Subscriber } from '../../../lib/models/subscriber'
+import { SubscriberDAO } from '../../../lib/models/subscriber'
 
 type Result = {
   message: string,
@@ -42,7 +42,7 @@ async function sendCampaign(req: CustomRequest, res: NextApiResponse<Result>) {
     }))
   })
 
-  fetch('/api/send', {
+  fetch(`${process.env.BASE_URL}/api/send`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

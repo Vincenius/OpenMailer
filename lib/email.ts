@@ -18,6 +18,7 @@ type TemplateProps = {
 };
 
 const getTransporter = (settings: any) => {
+  console.log(settings)
   let transporter
   if (settings.ses_key && settings.ses_secret) {
     AWS.config.update({

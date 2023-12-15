@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 // import styles from '@/styles/Home.module.css'
 import NumberCard from '@/components/NumberCard';
 import NewSubscribers from '@/components/NewSubscribers';
+import ImportForm from '@/components/ImportForm';
 import Layout from './Layout'
 import { getOpens, getUniqueClicks, getRate } from '../../utils/campaign';
 import { useFetch } from '../../utils/apiMiddleware'
@@ -14,7 +15,7 @@ type SubChartResult = {
 }
 
 export default function Home() {
-  const { data = {}, error, isLoading } = useFetch('/api/dashboard')
+  const { data = {}, error, isLoading, mutate } = useFetch('/api/dashboard')
   const subscribers: SubChartResult[] = data.subscribers || []
 
   const gradientOffset = () => {
@@ -44,9 +45,9 @@ export default function Home() {
   if (data.subscriberCount === 0) {
     return (<Layout title="Dashboard" isLoading={false}>
       <Title size="h1" mb="sm">Welcome to OpenMailer</Title>
-      <Text mb="lg">Get started by adding your first subscribers.</Text>
+      <Text mb="lg">Get started by adding or importing your first subscribers.</Text>
 
-      {/* todo import ? */}
+      <ImportForm onSuccess={() => mutate()}/>
       <NewSubscribers />
     </Layout>)
   }

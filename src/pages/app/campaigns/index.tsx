@@ -106,8 +106,9 @@ export default function Campaigns() {
             <Table.Th></Table.Th>
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody>{data.map((elem: Campaign) =>
-          {
+        <Table.Tbody>{data
+          .sort((a:any, b:any) => b.createdAt.localeCompare(a.createdAt))
+          .map((elem: Campaign) => {
             const received = elem.users.length
             const opened = elem.users.reduce((acc, user) => acc + (user.opens > 0 ? 1 : 0), 0)
             const clicked = elem.users.reduce((acc, user) => acc + (user.clicks.length > 0 ? 1 : 0), 0)

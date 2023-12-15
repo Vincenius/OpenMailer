@@ -9,11 +9,13 @@ type Result = {
 
 const handleUnsubscribe = async (req: CustomRequest, res: NextApiResponse<Result>) => {
   const id = (req.query.id || '').toString()
-  const subscriberDAO = new SubscriberDAO(req.db);
-  await subscriberDAO.updateByQuery(
-    { _id: new ObjectId(id) },
-    { unsubscribedAt: new Date() }
-  );
+  if (id !== 'test-user') {
+    const subscriberDAO = new SubscriberDAO(req.db);
+    await subscriberDAO.updateByQuery(
+      { _id: new ObjectId(id) },
+      { unsubscribedAt: new Date() }
+    );
+  }
 
   res.status(200).json({ message: 'Successfully unsubscribed'})
 }
