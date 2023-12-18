@@ -2,12 +2,13 @@ import getTrackingPixel from './tracking-pixel'
 
 export type EmailProps = {
   userId: string;
+  list: string;
 };
 
 export const campaignId = 'welcome'
 export const subject = '🚀 Welcome to WebDev Town! Your Weekly Web Dev Newsletter 💻'
 
-const getEmail = ({ userId }: EmailProps) => {
+const getEmail = ({ userId, list }: EmailProps) => {
   return `<mjml>
     <mj-head>
       <mj-attributes>
@@ -53,10 +54,10 @@ const getEmail = ({ userId }: EmailProps) => {
       <mj-section>
         <mj-column>
           <mj-text align="center">
-            <a href="${process.env.BASE_URL}/api/unsubscribe?id=${userId}">Unsubscribe</a><span>
+            <a href="${process.env.BASE_URL}/api/unsubscribe?id=${userId}&list=${list}">Unsubscribe</a><span>
           </mj-text>
         </mj-column>
-        ${getTrackingPixel({ userId, emailId: 'welcome' })}
+        ${getTrackingPixel({ userId, emailId: 'welcome', list })}
       </mj-section>
     </mj-body>
   </mjml>`

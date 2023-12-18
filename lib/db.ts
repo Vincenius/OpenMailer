@@ -1,5 +1,8 @@
 import { MongoClient, Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { AdminDAO } from './models/admin'
+import { SettingsDAO } from './models/settings';
+import { TemplatesDAO } from './models/templates';
 
 export interface CustomRequest extends NextApiRequest {
   dbClient: MongoClient;
@@ -13,13 +16,18 @@ if (!process.env.MONGODB_URI) {
 const uri = process.env.MONGODB_URI || ''
 const options = {}
 
-const withMongoDB = (handler: (req: CustomRequest, res: NextApiResponse) => Promise<void>) => {
+
+const withMongoDB = (
+  handler: (req: CustomRequest, res: NextApiResponse) => Promise<void>,
+  databaseName?: string,
+) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     let mongoClient
     try {
+      const database = databaseName || req.headers['x-mailing-list']?.toString()
       const client = new MongoClient(uri, options);
       mongoClient= await client.connect();
-      const db = client.db(process.env.DB_NAME); // Use your specific database name if applicable
+      const db = client.db(database);
 
       // Augment the request object with the MongoDB client and database
       const customReq: CustomRequest = Object.assign(req, {
@@ -39,5 +47,57 @@ const withMongoDB = (handler: (req: CustomRequest, res: NextApiResponse) => Prom
   };
 };
 
+export const listExists = async (req: NextApiRequest, res: NextApiResponse, listName: string) => {
+  let mongoClient
+  try {
+    const client = new MongoClient(uri, options);
+    mongoClient= await client.connect();
+    const db = client.db('settings');
+    const adminDAO = new AdminDAO(db)
+    const settings = await adminDAO.getSettings()
+
+    return settings && !!settings.newsletters.find(newsletter => newsletter.database === listName)
+  } catch (error) {
+    console.error('Error occurred:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    if (mongoClient) {
+      mongoClient.close()
+    }
+  }
+}
+
+export const getSettings = async (listName: string) => {
+  let mongoClient
+  try {
+    const client = new MongoClient(uri, options);
+    mongoClient= await client.connect();
+    const db = client.db('settings');
+    const adminDAO = new AdminDAO(db)
+
+    const newsletterDb = client.db(listName);
+    const settingsDAO = new SettingsDAO(newsletterDb)
+    const templatesDAO = new TemplatesDAO(newsletterDb)
+
+    const [newsletterSettings, settings, templates] = await Promise.all([
+      settingsDAO.getAll({}),
+      adminDAO.getSettings(),
+      templatesDAO.getAll({}),
+    ])
+
+    return {
+      ...settings,
+      ...newsletterSettings[0],
+      templates,
+    }
+  } catch (error) {
+    console.error('Error occurred:', error);
+    return null
+  } finally {
+    if (mongoClient) {
+      mongoClient.close()
+    }
+  }
+}
 
 export default withMongoDB;

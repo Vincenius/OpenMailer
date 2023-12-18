@@ -1,11 +1,12 @@
-import { Flex, Title } from '@mantine/core'
-import useSWR from 'swr'
+import { Flex, Title, Text } from '@mantine/core'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 // import styles from '@/styles/Home.module.css'
 import NumberCard from '@/components/NumberCard';
+import NewSubscribers from '@/components/NewSubscribers';
+import ImportForm from '@/components/ImportForm';
 import Layout from './Layout'
-import fetcher from '../../utils/fetcher'
 import { getOpens, getUniqueClicks, getRate } from '../../utils/campaign';
+import { useFetch } from '../../utils/apiMiddleware'
 
 type SubChartResult = {
   date: string,
@@ -14,8 +15,7 @@ type SubChartResult = {
 }
 
 export default function Home() {
-  const { data = {}, error, isLoading } = useSWR('/api/dashboard', fetcher)
-
+  const { data = {}, error, isLoading, mutate } = useFetch('/api/dashboard')
   const subscribers: SubChartResult[] = data.subscribers || []
 
   const gradientOffset = () => {
@@ -37,12 +37,28 @@ export default function Home() {
   const lastOpened = getRate(getOpens(data.campaign) || 0, lastReceived)
   const lastClicked = getRate(getUniqueClicks(data.campaign) || 0, lastReceived)
 
+  if (isLoading) {
+    return (<Layout title="Dashboard" isLoading={true}>
+    </Layout>)
+  }
+
+  if (data.subscriberCount === 0) {
+    return (<Layout title="Dashboard" isLoading={false}>
+      <Title size="h1" mb="sm">Welcome to OpenMailer</Title>
+      <Text mb="lg">Get started by adding or importing your first subscribers.</Text>
+
+      <ImportForm onSuccess={() => mutate()}/>
+      <NewSubscribers />
+    </Layout>)
+  }
+
   return (
     <Layout title="Dashboard" isLoading={isLoading}>
+      <Title size="h1" mb="md">Welcome back!</Title>
       <Flex mb="xl">
         <NumberCard title="Subscribers" count={data.subscriberCount} />
-        <NumberCard title="Recent Open Rate" count={lastOpened} symbol="%" />
-        <NumberCard title="Recent Click Rate" count={lastClicked} symbol="%" />
+        <NumberCard title="Recent Open Rate" count={lastOpened || 0} symbol="%" />
+        <NumberCard title="Recent Click Rate" count={lastClicked || 0} symbol="%" />
       </Flex>
       <Title size="h4" mb="md">Recent Subscriber Growth</Title>
       <Flex>

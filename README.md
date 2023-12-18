@@ -4,6 +4,8 @@ A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
 ## Features
 
+- creation of multiple email lists
+
 - a POST endpoint for subscribing
 
 - double opt-in and unsubscribe logic
@@ -16,15 +18,11 @@ A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
 ## Setup
 
-1. Install dependencies with `npm i` or `yarn`
+1. Create a MongoDB database. Your database user should have Admin permissions.
 
-2. Create MongoDB database with collections "subscribers" and "campaigns"
+2. Install dependencies with `npm i` or `yarn`
 
-3. Copy `.env.dist` to `.env.local` and add configuration
+3. Copy `.env.dist` to `.env.local` and add the configuration
 
-4. Run with `npm run dev`
-
-## Customize
-
-Update the welcome template in `/lib/templates/welcome`
+4. Run locally with `npm run dev`. To run the production version use `npm run build` and `npm run start`.
 
