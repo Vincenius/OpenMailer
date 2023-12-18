@@ -9,7 +9,7 @@ import BrowserMockup from '@/components/BrowserMockup'
 
 export default function NewCampaign() {
   const router = useRouter()
-  const [subject, setSuject] = useState('');
+  const [subject, setSubject] = useState('');
   const [html, setHtml] = useState('<html><body>Preview</body></html>');
   const [loading, setLoading] = useState(false);
   const [testEmail, setTestEmail] = useState('');
@@ -53,7 +53,7 @@ export default function NewCampaign() {
         <Box w="100%" mr="md">
           <TextInput
             value={subject}
-            onChange={(event) => setSuject(event.currentTarget.value)}
+            onChange={(event) => setSubject(event.currentTarget.value)}
             label="Subject"
             mb="md"
           />

@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from "next-auth/react"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
-import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay, Select, Modal } from '@mantine/core'
+import { AppShell, Burger, NavLink, Title, Flex, LoadingOverlay, Select, Modal, Text } from '@mantine/core'
+import { IconHome2, IconMail, IconUsersGroup, IconTemplate, IconSettings, IconLogout2 } from '@tabler/icons-react';
 import NewsetterSettings from '@/components/NewsletterSettings'
 import fetcher from '../../utils/fetcher'
 import { Newsletter } from '../../../lib/models/admin'
@@ -99,12 +100,19 @@ export default function Layout(props: LayoutProps) {
             </Flex>
           </AppShell.Header>
 
+          <AppShell.Footer>
+            <Text ta="right" pr="sm">
+              <a href="https://github.com/Vincenius/open-mailer">GitHub</a> | <a href="https://ko-fi.com/wweb_dev">Donate ❤️</a>
+            </Text>
+          </AppShell.Footer>
+
           <AppShell.Navbar p="md">
-            <NavLink label="Dashboard" href="/app" active={path === '/app'} component={Link}/>
-            <NavLink label="Campaigns" href="/app/campaigns" active={path === '/app/campaigns'} component={Link}/>
-            <NavLink label="Subscribers" href="/app/subscribers" active={path === '/app/subscribers'} component={Link}/>
-            <NavLink label="Settings" href="/app/settings" active={path === '/app/settings'} component={Link}/>
-            <NavLink label="Logout" onClick={() => signOut()} />
+            <NavLink label="Dashboard" href="/app" active={path === '/app'} component={Link} leftSection={<IconHome2 size="1rem" stroke={1.5} />} />
+            <NavLink label="Campaigns" href="/app/campaigns" active={path === '/app/campaigns'} component={Link} leftSection={<IconMail size="1rem" stroke={1.5} />} />
+            <NavLink label="Subscribers" href="/app/subscribers" active={path === '/app/subscribers'} component={Link} leftSection={<IconUsersGroup size="1rem" stroke={1.5} />} />
+            <NavLink label="Templates" href="/app/templates" active={path === '/app/templates'} component={Link} leftSection={<IconTemplate size="1rem" stroke={1.5} />} />
+            <NavLink label="Settings" href="/app/settings" active={path === '/app/settings'} component={Link} leftSection={<IconSettings size="1rem" stroke={1.5} />} />
+            <NavLink label="Logout" onClick={() => signOut()} leftSection={<IconLogout2 size="1rem" stroke={1.5} />} />
           </AppShell.Navbar>
 
           { mailingList && <AppShell.Main>{props.children}</AppShell.Main> }

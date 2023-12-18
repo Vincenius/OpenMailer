@@ -15,7 +15,7 @@ const jsCode = (url: string, list: string) => `fetch("${url}/api/subscribe", {
   },
   body: JSON.stringify({
     list: '${list}',
-    email:'subscriber@example.com', // replace with user email
+    email: 'subscriber@example.com', // replace with user email
   }),
 })`
 

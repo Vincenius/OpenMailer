@@ -2,8 +2,10 @@ import type { NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'
 import withMongoDB, { CustomRequest } from '../../../lib/db'
 import { Settings, SettingsDAO } from '../../../lib/models/settings'
+import { TemplatesDAO } from '../../../lib/models/templates'
 import { AdminDAO } from '../../../lib/models/admin'
 import withAuth from '../../../lib/auth';
+import { getSubject, getHtml } from '../../../lib/templates/confirmation'
 
 type Result = {
   message: string,
@@ -11,7 +13,15 @@ type Result = {
 
 const addSettings = async (req: CustomRequest, res: NextApiResponse<Result>) => {
   const settingsDAO = new SettingsDAO(req.db);
-  await settingsDAO.create(req.body)
+  const templateDAO = new TemplatesDAO(req.db)
+  await Promise.all([
+    settingsDAO.create(req.body),
+    templateDAO.create({
+      name: 'confirmation',
+      subject: getSubject(req.body.name),
+      html: getHtml(req.body.name),
+    }),
+  ])
 
   res.status(200).json({ message:'success' })
 }

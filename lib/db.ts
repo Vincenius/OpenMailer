@@ -2,6 +2,7 @@ import { MongoClient, Db } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { AdminDAO } from './models/admin'
 import { SettingsDAO } from './models/settings';
+import { TemplatesDAO } from './models/templates';
 
 export interface CustomRequest extends NextApiRequest {
   dbClient: MongoClient;
@@ -73,15 +74,21 @@ export const getSettings = async (listName: string) => {
     mongoClient= await client.connect();
     const db = client.db('settings');
     const adminDAO = new AdminDAO(db)
-    const settings = await adminDAO.getSettings()
 
     const newsletterDb = client.db(listName);
     const settingsDAO = new SettingsDAO(newsletterDb)
-    const newsletterSettings = await settingsDAO.getAll({})
+    const templatesDAO = new TemplatesDAO(newsletterDb)
+
+    const [newsletterSettings, settings, templates] = await Promise.all([
+      settingsDAO.getAll({}),
+      adminDAO.getSettings(),
+      templatesDAO.getAll({}),
+    ])
 
     return {
       ...settings,
       ...newsletterSettings[0],
+      templates,
     }
   } catch (error) {
     console.error('Error occurred:', error);

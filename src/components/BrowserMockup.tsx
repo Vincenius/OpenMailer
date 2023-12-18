@@ -8,7 +8,7 @@ type Props = {
 
 const BrowserMockup = (props: Props) => {
     return <Box w="100%">
-      <Card shadow="md" mt="md" withBorder>
+      <Card shadow="md" withBorder mih={200}>
         <Card.Section>
           <div className={classes.browserHead}>
             <div className={classes.browserDots}></div>

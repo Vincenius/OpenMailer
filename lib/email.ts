@@ -1,12 +1,5 @@
-import mjml2html from 'mjml'
 import AWS from 'aws-sdk'
 import nodemailer, { SentMessageInfo } from 'nodemailer'
-import confirmationTemplate, { EmailProps as ConfirmProps } from './templates/confirmation'
-import welcomeTemplate, {
-  EmailProps as WelcomeProps,
-  campaignId as welcomeCampaignId,
-  subject as welcomeSubject,
-} from './templates/welcome'
 import { getPixelHtml } from './templates/tracking-pixel'
 import getUnsubscribe from './templates/unsubscribe'
 import { getSettings } from './db'
@@ -17,8 +10,12 @@ type TemplateProps = {
   list: string;
 };
 
+type ConfirmProps = {
+  list: string;
+  confirmationId: string;
+};
+
 const getTransporter = (settings: any) => {
-  console.log(settings)
   let transporter
   if (settings.ses_key && settings.ses_secret) {
     AWS.config.update({
@@ -60,23 +57,14 @@ const mapLinks = (mjml: string, userId: string, campaignId: string, list: string
 }
 
 export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => {
+  const link = `${process.env.BASE_URL}/api/confirm?id=${props.confirmationId}&list=${props.list}`
   const settings = await getSettings(props.list)
-  const subject = `${settings?.name} | Confirm your email address`
-  const mjml = confirmationTemplate(props)
-  const htmlOutput = mjml2html(mjml)
-  const html = htmlOutput.html
+  const template = settings?.templates.find(template => template.name === 'confirmation')
+  const subject = template?.subject || 'Confirm your email address'
+  const regex = new RegExp('{{CONFIRMATION_LINK}}', 'g');
+  const html = (template?.html || '').replace(regex, link)
 
   return sendEmail(to, subject, html, settings)
-}
-
-export const sendWelcomeEmail = async (to: string, props: WelcomeProps) => {
-  const settings = await getSettings(props.list)
-  const mjml = welcomeTemplate(props)
-  const injectedLinksMjml = mapLinks(mjml, props.userId, welcomeCampaignId, props.list)
-  const htmlOutput = mjml2html(injectedLinksMjml)
-  const html = htmlOutput.html
-
-  return sendEmail(to, welcomeSubject, html, settings)
 }
 
 export const sendCampaign = async (to: string, subject: string, html: string, props: TemplateProps) => {
@@ -89,11 +77,24 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
   return sendEmail(to, subject, finalHtml, settings)
 }
 
+export const sendWelcomeEmail = async (to: string, list: string, userId: string) => {
+  const settings = await getSettings(list)
+  const template = settings?.templates.find(template => template.name === 'welcome')
+
+  if (template) {
+    const subject = template?.subject || 'Confirm your email address'
+    const unsubscribeLink = getUnsubscribe({ userId, list })
+    const finalHtml = (template?.html || '').replace('</body>', `${unsubscribeLink}</body>`)
+
+    return sendEmail(to, subject, finalHtml, settings)
+  }
+}
+
 const sendEmail = async (to: string, subject: string, html: string, settings: any) => {
   try {
     const transporter = getTransporter(settings)
     const result: SentMessageInfo = await transporter.sendMail({
-      from: `WebDev Town <${settings.email}>`, // TODO name
+      from: `${settings.name} <${settings.email}>`,
       to: `${to} <${to}>`,
       subject,
       html,
