@@ -56,6 +56,17 @@ const mapLinks = (mjml: string, userId: string, campaignId: string, list: string
   return updatedMjml;
 }
 
+const attachUnsubscribeAndPixel = (html: string, unsubscribeLink: string, trackingPixel: string) => {
+  let result = html
+  if (html.includes('</body>')) {
+    result = html.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`)
+  } else {
+    result = `${html}${unsubscribeLink}${trackingPixel}`
+  }
+
+  return result
+}
+
 export const sendConfirmationEmail = async (to: string, props: ConfirmProps) => {
   const link = `${process.env.BASE_URL}/api/confirm?id=${props.confirmationId}&list=${props.list}`
   const settings = await getSettings(props.list)
@@ -72,7 +83,7 @@ export const sendCampaign = async (to: string, subject: string, html: string, pr
   const injectedLinksHtml = mapLinks(html, props.userId, props.templateId, props.list)
   const trackingPixel = getPixelHtml({ userId: props.userId, emailId: props.templateId, list: props.list })
   const unsubscribeLink = getUnsubscribe({ userId: props.userId, list: props.list })
-  const finalHtml = injectedLinksHtml.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`)
+  const finalHtml = attachUnsubscribeAndPixel(injectedLinksHtml, unsubscribeLink, trackingPixel)
 
   return sendEmail(to, subject, finalHtml, settings)
 }
@@ -84,7 +95,7 @@ export const sendWelcomeEmail = async (to: string, list: string, userId: string)
   if (template) {
     const subject = template?.subject || 'Confirm your email address'
     const unsubscribeLink = getUnsubscribe({ userId, list })
-    const finalHtml = (template?.html || '').replace('</body>', `${unsubscribeLink}</body>`)
+    const finalHtml = attachUnsubscribeAndPixel(template?.html || '', unsubscribeLink, '')
 
     return sendEmail(to, subject, finalHtml, settings)
   }
