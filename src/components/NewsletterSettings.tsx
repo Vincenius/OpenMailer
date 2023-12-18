@@ -63,6 +63,26 @@ const NewsetterSettings = (props: Props) => {
     setLoading(false)
   }
 
+  const testConnection = async () => {
+    setLoading(true)
+    const { message: result } = await triggerUpdate({ url: '/api/testConnection', method: 'POST', body: formValues })
+    console.log(result)
+    if (result === 'success') {
+      notifications.show({
+        color: 'green',
+        title: 'Success',
+        message: `Successfully triggered a test email! You should have received an email.`,
+      });
+    } else {
+      notifications.show({
+        color: 'red',
+        title: 'Error',
+        message: `Something went wrong! Check the server logs for more details.`,
+      });
+    }
+    setLoading(false)
+  }
+
   const handleChange = (target: EventTarget): void => {
     const inputElement = target as HTMLInputElement;
     setFormValues({
@@ -175,11 +195,12 @@ const NewsetterSettings = (props: Props) => {
       />
     </> }
 
-    {/* todo test connection */}
-
-    <Flex justify="flex-end">
-      { props.isUpdate && <Button color="red" variant="outline" mr="md" onClick={open}>Delete</Button>}
-      <Button type="submit" loading={loading}>{props.buttonCaption || 'Continue'}</Button>
+    <Flex justify="space-between">
+      <Button onClick={testConnection} loading={loading} variant="outline">Test connection</Button>
+      <Flex justify="flex-end">
+        { props.isUpdate && <Button color="red" variant="outline" mr="md" onClick={open}>Delete</Button>}
+        <Button type="submit" loading={loading}>{props.buttonCaption || 'Continue'}</Button>
+      </Flex>
     </Flex>
 
     <Modal opened={opened} title="Are you sure?" size="sm" onClose={close}>

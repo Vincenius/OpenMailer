@@ -82,7 +82,6 @@ async function handleSettings(req: CustomRequest, res: NextApiResponse<Result | 
   }
 }
 
-// todo check auth
 async function handler(
   req: CustomRequest,
   res: NextApiResponse<Result | Settings[]>
