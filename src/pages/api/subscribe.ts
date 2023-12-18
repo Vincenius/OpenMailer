@@ -50,7 +50,7 @@ async function handler(
   if (req.method === 'POST') {
     await NextCors(req, res, {
       // Options
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'OPTIONS'],
       origin: process.env.CORS_ORIGIN,
       optionsSuccessStatus: 200,
     });
@@ -79,7 +79,7 @@ async function handler(
   } else if (req.method === 'OPTIONS') {
     await NextCors(req, res, {
       // Options
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'OPTIONS'],
       origin: process.env.CORS_ORIGIN,
       optionsSuccessStatus: 200,
     });

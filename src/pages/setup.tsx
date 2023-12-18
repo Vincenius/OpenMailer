@@ -56,7 +56,6 @@ export default function Setup() {
         signIn('credentials', { redirect: false, ...formValues })
         setFormValues({
           base_url: window.location.origin,
-          cors_origin: '*',
         })
       }
       nextStep()
