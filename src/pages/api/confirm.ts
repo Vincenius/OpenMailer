@@ -21,7 +21,7 @@ const confirmSubscriber = async (req: CustomRequest, res: NextApiResponse<Subscr
       const userId = (subscriber._id || '').toString()
       await sendWelcomeEmail(subscriber.email, list, userId)
     }
-    res.redirect(301, process.env.CONFIRM_REDIRECT || '/thank-you') // todo fallback thank you page
+    res.redirect(301, `${process.env.BASE_URL}/confirm-success`)
   } else {
     res.status(400).json({
       message: 'Invalid confirmation link',
@@ -40,7 +40,7 @@ async function handler(
           message: 'Invalid confirmation link',
         })
       } else if (req.query.id === 'test-confirm') {
-        res.redirect(301, process.env.CONFIRM_REDIRECT || '/thank-you')
+        res.redirect(301, `${process.env.BASE_URL}/confirm-success`)
       } else {
         const validList = await listExists(req, res, req.query.list.toString())
         if (validList) {

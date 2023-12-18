@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useFetch, useUpdate } from '@/utils/apiMiddleware'
 import { notifications } from '@mantine/notifications';
 import { SimpleGrid, Card, Text, Button, Modal, Flex, Box, Textarea, TextInput } from '@mantine/core';
@@ -22,6 +22,13 @@ const TemplateCard = (props: TemplateProps) => {
   const [loading, setLoading] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const { triggerUpdate } = useUpdate();
+
+  useEffect(() => {
+    if (!html && !subject && (props?.data?.html || props?.data?.subject)) {
+      setHtml(props?.data?.html);
+      setSubject(props?.data?.subject);
+    }
+  }, [props.data, html, subject])
 
   const sendTestEmail = () => {
     setLoading(true)

@@ -4,7 +4,6 @@ export interface Settings {
   _id?: ObjectId,
   name: string,
   email: string,
-  confirm_redirect: string,
   api_key: string,
   database: string,
   sending_type: string, // 'email' or 'ses'
