@@ -81,7 +81,7 @@ export default function Subscribers() {
         </Table.Tbody>
       </Table>
 
-      { total > 50 && <Pagination value={page} onChange={setPage} total={total / 50} mt="md" /> }
+      { total > 50 && <Pagination value={page} onChange={setPage} total={total / 50} mt="md" mb="xl" /> }
 
       <Modal opened={opened} onClose={close} title="Subscribe form" size="xl">
         <NewSubscribers />

@@ -1,4 +1,4 @@
-# OpenMailer [work in progress]
+# OpenMailer
 
 A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
@@ -18,11 +18,11 @@ A minimalist Next.js alternative to Mailchimp, Beehiiv, Convertkit etc...
 
 ## Setup
 
-1. Create a MongoDB database. Your database user should have Admin permissions.
+1. Create a MongoDB database. Your database user should have admin permissions.
 
 2. Install dependencies with `npm i` or `yarn`
 
-3. Copy `.env.dist` to `.env.local` and add the configuration
+3. Copy `.env.dist` to `.env.local` and update the configuration
 
 4. Run locally with `npm run dev`. To run the production version use `npm run build` and `npm run start`.
 
