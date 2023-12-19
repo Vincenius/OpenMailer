@@ -43,3 +43,5 @@
 3. Copy `.env.dist` to `.env.local` and update the configuration
 
 4. Run locally with `npm run dev`. To run the production version use `npm run build` and `npm run start`.
+
+If you need additional instructions, here is a guide on how to self-host applications on an Ubuntu server: [https://dev.to/vincenius/self-hosting-your-web-app-on-an-ubuntu-server-1ple](https://dev.to/vincenius/self-hosting-your-web-app-on-an-ubuntu-server-1ple)
