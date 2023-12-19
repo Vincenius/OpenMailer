@@ -20,6 +20,8 @@
 
 - creation of multiple email lists
 
+- sending emails either via credentials or AWS SES using nodemailer
+
 - a POST endpoint for subscribing
 
 - import functionality for subscribers
