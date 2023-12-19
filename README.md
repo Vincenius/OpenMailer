@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/github/contributors/Vincenius/OpenMailer?style=plastic" alt="Contributors">
 <img src="https://img.shields.io/github/forks/Vincenius/OpenMailer" alt="Forks">
 <img src="https://img.shields.io/github/stars/Vincenius/OpenMailer" alt="Stars">
-<img src="https://img.shields.io/github/license/Vincenius/OpenMailer" alt="Licence">
+<img src="https://img.shields.io/github/license/Vincenius/OpenMailer?" alt="Licence">
 <img src="https://img.shields.io/github/issues/Vincenius/OpenMailer" alt="Issues">
 <img src="https://img.shields.io/github/languages/count/Vincenius/OpenMailer" alt="Languages">
 <img src="https://img.shields.io/github/repo-size/Vincenius/OpenMailer" alt="Repository Size">
