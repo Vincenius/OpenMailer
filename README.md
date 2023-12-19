@@ -43,7 +43,3 @@
 3. Copy `.env.dist` to `.env.local` and update the configuration
 
 4. Run locally with `npm run dev`. To run the production version use `npm run build` and `npm run start`.
-
-## License
-
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
